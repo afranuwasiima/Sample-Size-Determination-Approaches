@@ -414,23 +414,49 @@
 
   /* ── PRINT / PDF STYLES ── */
   @media print {
-    body { font-size: 13px; }
-    header { padding: 36px 0 28px; }
+    body { font-size: 12.5px; line-height: 1.5; }
+    header { padding: 32px 0 24px; }
     nav { display: none !important; }
-    main { padding: 0 24px 40px; }
-    h1 { font-size: 28px; }
-    h2 { font-size: 18px; }
+    main { padding: 0 20px 20px; }
+    h1 { font-size: 26px; margin-bottom: 10px; }
+    h2 { font-size: 17px; margin-bottom: 10px; }
+    h3 { font-size: 14px; margin-bottom: 6px; }
+    p { margin-bottom: 8px; }
     .calc-btn { display: none; }
-    .result-panel { display: block !important; }
+    .result-panel { display: block !important; margin-top: 12px; }
     .result-panel.show { display: block !important; }
-    section { page-break-inside: avoid; }
-    .approaches-section { page-break-before: auto; }
-    .formula-box { page-break-inside: avoid; }
-    .concept-grid { page-break-inside: avoid; }
-    .deff-table-wrap { page-break-inside: avoid; }
+    
+    /* Kill page-break-inside: avoid on large sections — let content flow */
+    section { page-break-inside: auto; }
+    .approaches-section { page-break-before: auto; page-break-inside: auto; padding-top: 28px; padding-bottom: 8px; }
+    
+    /* Only protect small atomic blocks */
+    .formula-box { page-break-inside: avoid; margin: 12px 0; padding: 14px 18px; }
     .result-panel { page-break-inside: avoid; }
+    .concept-card { page-break-inside: avoid; }
+    .alert { page-break-inside: avoid; margin: 10px 0; }
     .references { page-break-inside: avoid; }
-    footer { page-break-before: always; }
+    
+    /* Tighten spacing throughout */
+    .context-section { padding: 28px 0 20px; }
+    .concept-grid { gap: 10px; margin: 16px 0; }
+    .concept-card { padding: 12px; }
+    .calc-grid { gap: 14px; margin-bottom: 14px; }
+    .input-group { margin-bottom: 10px; }
+    .scenario-grid { gap: 8px; margin: 12px 0; }
+    .approach-header { padding: 14px 18px; margin-bottom: 16px; }
+    .deff-table-wrap { margin-top: 14px; }
+    hr.section-rule { margin: 24px 0; }
+    .header-meta { margin-top: 16px; gap: 12px; }
+    .header-sub { line-height: 1.5; }
+    .eyebrow { margin-bottom: 8px; }
+    
+    /* Tables tighter */
+    table.deff-table td, table.deff-table th { padding: 4px 8px; font-size: 11px; }
+    
+    /* Footer: no forced page break */
+    footer { page-break-before: auto; padding: 28px 0 24px; }
+    
     a[href]::after { content: none !important; }
   }
 </style>
@@ -446,7 +472,10 @@
       <span class="meta-pill">9 Approaches + FPC</span>
       <span class="meta-pill">Proportion: Cochran · Cluster · Two-Arm · Beneficiary · General Pop</span>
       <span class="meta-pill">Numeric: One-Sample Mean · Two-Sample Means · Cluster Mean</span>
-      <span class="meta-pill">Based on DHS · WHO · UBOS · CONSORT · STROBE Standards</span>
+      <span class="meta-pill">Based on Demographic and Health Surveys (DHS) · World Health Organization (WHO) · National Statistical Bodies · CONSORT · STROBE Standards</span>
+    </div>
+    <div style="margin-top:20px;">
+      <a href="https://afranuwasiima.github.io/Sample-Size-Determination-Approaches/" target="_blank" style="display:inline-block; font-family:var(--mono); font-size:12px; color:#fff; background:var(--accent); text-decoration:none; padding:8px 20px; border-radius:3px; letter-spacing:0.04em;">▶ View Interactive Online Version with Live Calculators →</a>
     </div>
   </div>
 </header>
@@ -478,8 +507,38 @@
 <section class="context-section" id="context">
   <div class="section-label">01 — Why Sample Size Matters</div>
   <h2>Choosing the Right Formula Before You Choose a Number</h2>
-  <p>Sample size is not a single number — it is the output of a set of <strong>design decisions</strong>. The most common mistake in health and development research is applying the Cochran formula to every study regardless of design, then defending an arbitrary number as "statistically sound." The formula you choose must match how you will collect data, what you are trying to measure, and what comparisons you intend to make.</p>
-  <p>This guide covers five scientifically distinct approaches. Each is appropriate for a different study type. The decision tree below helps you select the right one.</p>
+
+  <div style="background:#fff; border:1px solid var(--rule); border-radius:4px; padding:20px 24px; margin-bottom:24px;">
+    <h3 style="color:var(--accent); margin-bottom:10px;">What is sample size determination — in plain language?</h3>
+    <p style="font-size:14px; line-height:1.7; margin-bottom:12px;">When you run a survey or evaluation, you rarely have the resources to reach every single person in your target population. Instead, you select a <strong>sample</strong> — a smaller group that represents the whole. Sample size determination is the process of figuring out <em>how many people you need to include</em> so that what you learn from the sample can be trusted as a fair reflection of the entire population.</p>
+    <p style="font-size:14px; line-height:1.7; margin-bottom:12px;">Think of it this way: if you want to know what percentage of households in a district use a mosquito net, you could visit all 50,000 households — or you could visit 400 carefully selected ones and be 95% confident your answer is within ±5% of the truth. The formulas in this guide tell you exactly how many "400" is for your specific situation.</p>
+    <p style="font-size:14px; line-height:1.7; margin-bottom:0;">But here’s the catch: <strong>the number changes depending on your study design</strong>. Are you estimating a single percentage, or comparing two groups? Is your outcome a yes/no question, or a measurement like weight? Are you selecting households directly from a register, or going village by village? Each scenario needs a different formula. Using the wrong one is like measuring distance with a kitchen scale — the tool doesn’t match the task.</p>
+  </div>
+
+  <div style="background:var(--light2); border:1px solid #C8E6D0; border-radius:4px; padding:20px 24px; margin-bottom:24px;">
+    <h3 style="color:var(--accent2); margin-bottom:10px;">From my published work: three examples of sample size in action</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+      <div style="background:#fff; padding:14px; border-radius:3px; border-top:3px solid var(--accent);">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Approach 3 — Two-Arm RCT</div>
+        <p style="font-size:12px; margin:0 0 8px; line-height:1.6;">In our RCT testing a mobile phone application for SRH services among university students in Uganda, we needed to power the study to detect a meaningful difference in SRH uptake between intervention and control arms. We used a <strong>two-arm power calculation</strong> with a specified minimum detectable difference, 80% power, and 95% confidence — exactly <strong>Approach 3</strong> in this guide.</p>
+        <p style="font-size:11px; margin:0; color:var(--mid); line-height:1.5;"><a href="https://doi.org/10.1186/s12978-018-0642-0" target="_blank" style="color:var(--accent);">Nuwamanya, Nuwasiima et al. (2018)</a> <em>Reproductive Health</em>, 15(1), 216. <span style="font-family:var(--mono); font-size:10px; background:var(--light); padding:1px 5px; border-radius:2px;">32 citations</span></p>
+      </div>
+      <div style="background:#fff; padding:14px; border-radius:3px; border-top:3px solid var(--accent2);">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--accent2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Approach 4 — Quasi-Experimental</div>
+        <p style="font-size:12px; margin:0 0 8px; line-height:1.6;">For a quasi-experimental study of family planning benefits cards among urban youth in Kampala slums, we designed a <strong>stratified beneficiary sample</strong> across programme sites with known cluster sizes. The sampling frame came from a defined beneficiary register — making <strong>Approach 4</strong> (beneficiary cluster enumeration) the correct choice over simple random sampling.</p>
+        <p style="font-size:11px; margin:0; color:var(--mid); line-height:1.5;"><a href="https://doi.org/10.1186/s12978-017-0400-8" target="_blank" style="color:var(--accent);">Nuwasiima et al. (2017)</a> <em>Reproductive Health</em>, 14(1), 140. <span style="font-family:var(--mono); font-size:10px; background:var(--light); padding:1px 5px; border-radius:2px;">12 citations</span></p>
+      </div>
+      <div style="background:#fff; padding:14px; border-radius:3px; border-top:3px solid #6B21A8;">
+        <div style="font-family:var(--mono); font-size:10px; color:#6B21A8; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Approach 9 — Multi-Arm α Adjustment</div>
+        <p style="font-size:12px; margin:0 0 8px; line-height:1.6;">In an immunisation demand generation experiment, we wanted to test 3 different interventions against our standard of care — and compare each arm against the others. With multiple pairwise comparisons, a standard α=0.05 would have inflated our false-positive rate well beyond 5%. We had to <strong>adjust alpha by the number of potential comparisons</strong> using <strong>Approach 9</strong> (Šidák correction) before estimating sample size per arm.</p>
+        <p style="font-size:11px; margin:0; color:var(--mid); line-height:1.5;"><em>Unpublished operational study.</em></p>
+      </div>
+    </div>
+    <p style="font-size:12px; margin-top:12px; color:var(--mid); font-style:italic;">Each of the 9 approaches in this guide has been applied on at least one real study across my 11 years of work. Most have been approved by Institutional Review Boards (IRBs) across multiple projects. Full publication list: <a href="https://scholar.google.com/citations?user=nXN6ZAYAAAAJ" target="_blank" style="color:var(--accent);">Google Scholar (298 citations, h-index 9)</a>.</p>
+  </div>
+
+  <p>Sample size is not a single number — it is the output of a set of <strong>design decisions</strong>. The most common mistake in health and development research is applying the Cochran formula to every study regardless of design, then defending an arbitrary number as “statistically sound.” The formula you choose must match how you will collect data, what you are trying to measure, and what comparisons you intend to make.</p>
+  <p>This guide covers nine scientifically distinct approaches. Each is appropriate for a different study type. The decision tree below helps you select the right one.</p>
 
   <div class="concept-grid">
     <div class="concept-card">
@@ -495,7 +554,7 @@
     <div class="concept-card">
       <div class="symbol">ρ</div>
       <div class="label">Intracluster Correlation</div>
-      <p>When households are sampled in clusters (villages, blocks), observations within the same cluster are more similar to each other. ρ=0.05 is the UDHS average across 48 surveys in Uganda. Consult your country’s DHS or national household survey for local ICC values.</p>
+      <p>When households are sampled in clusters (villages, blocks), observations within the same cluster are more similar to each other. ρ=0.05 is the Uganda Demographic and Health Survey (UDHS) average across 48 surveys. Consult your country’s Demographic and Health Survey (DHS) or national household survey for local ICC values.</p>
     </div>
     <div class="concept-card">
       <div class="symbol">DEFF</div>
@@ -599,6 +658,38 @@
     </div>
     <p style="font-size:13px; margin-top:12px; color:var(--mid); font-style:italic;">Each calculator below includes a scenario comparison or sensitivity table. Use them to present 2–3 options in your protocol: a preferred (high-rigour) scenario, a feasible (budget-fit) alternative, and the minimum acceptable threshold. Document the rationale for your final choice in the methods section.</p>
   </div>
+
+  <div style="margin:28px 0;">
+    <h3 style="margin-bottom:6px;">Scenario Demonstration: Cluster-Adjusted Sample Sizes at a Glance</h3>
+    <p style="font-size:13px; margin-bottom:16px;">The table below shows how sample size and cluster count change across different margins of error and cluster sizes — with all other parameters fixed. Use this to identify the intersection of scientific rigour and operational feasibility for your study. <span style="background:#FEF3CD; padding:2px 6px; font-size:12px; font-family:var(--mono);">Highlighted</span> = preferred scenario (±5%, m=25).</p>
+
+    <div style="background:#fff; border:1px solid var(--rule); border-left:4px solid var(--accent); padding:16px 20px; border-radius:0 4px 4px 0; margin-bottom:16px;">
+      <div style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:8px;">Fixed Parameters</div>
+      <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; font-size:12px;">
+        <div><strong>ρ (rho)</strong> = 0.05 <span style="color:var(--mid); font-size:11px;">· UDHS avg</span></div>
+        <div><strong>P</strong> = 74.2% <span style="color:var(--mid); font-size:11px;">· Baseline</span></div>
+        <div><strong>Z</strong> = 1.96 <span style="color:var(--mid); font-size:11px;">· 95% CI</span></div>
+        <div><strong>NR</strong> = 5% <span style="color:var(--mid); font-size:11px;">· Non-response</span></div>
+        <div><strong>Formula</strong> = Approach 2 <span style="color:var(--mid); font-size:11px;">· Cluster-adj</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div>
+        <div style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#fff; background:var(--accent2); padding:6px 12px; text-align:center; margin-bottom:0;">NR-Adjusted Sample Size</div>
+        <div class="deff-table-wrap" style="margin-top:0;">
+          <table class="deff-table" id="scenario_n_table"></table>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#fff; background:var(--accent); padding:6px 12px; text-align:center; margin-bottom:0;">Number of Clusters Required</div>
+        <div class="deff-table-wrap" style="margin-top:0;">
+          <table class="deff-table" id="scenario_c_table"></table>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:11px; color:var(--mid); margin-top:8px; font-style:italic;">Reading the table: At cluster size m=25 and ±5% margin of error, you need 823 respondents across 33 clusters. Relaxing to ±7% drops the requirement to 421 across 17 clusters — a 49% reduction in fieldwork, at the cost of wider confidence intervals. Larger cluster sizes are operationally efficient (fewer clusters to visit) but increase the design effect.</p>
+  </div>
 </section>
 
 <!-- ══════════════════════════════════════════════════════════
@@ -611,7 +702,7 @@
   <div class="approach-header">
     <div class="use-case">USE WHEN → Descriptive baseline · Single-arm prevalence survey · Direct household selection from a list</div>
     <h3>Cross-sectional surveys estimating the prevalence of a single indicator</h3>
-    <p>The Cochran (1977) formula estimates the minimum sample needed to estimate a proportion P within a specified margin of error, at a given confidence level. It assumes simple random sampling — no clustering, no stratification beyond what is explicitly modeled. This is the appropriate formula when you have access to a household register (UNHCR, OPM, UBOS) and can select households directly without village-level clustering.</p>
+    <p>The Cochran (1977) formula estimates the minimum sample needed to estimate a proportion P within a specified margin of error, at a given confidence level. It assumes simple random sampling — no clustering, no stratification beyond what is explicitly modeled. This is the appropriate formula when you have access to a household register (United Nations High Commissioner for Refugees (UNHCR), Office of the Prime Minister (OPM), Uganda Bureau of Statistics (UBOS)) and can select households directly without village-level clustering.</p>
   </div>
 
   <div class="formula-box">
@@ -1663,7 +1754,7 @@
   </div>
 
   <h3 style="margin-top:28px;">Free Online Calculators for Verification</h3>
-  <div class="concept-grid" style="grid-template-columns:1fr 1fr 1fr;">
+  <div class="concept-grid" style="grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));">
     <div class="concept-card" style="border-top-color:var(--mid)">
       <div class="symbol" style="font-size:14px; color:var(--mid)">OpenEpi</div>
       <p style="font-size:12px;">Proportion and means formulas. Used by WHO and CDC. Matches Approaches 1, 3, 6, 7.</p>
@@ -1673,6 +1764,11 @@
       <div class="symbol" style="font-size:14px; color:var(--mid)">ENA for SMART</div>
       <p style="font-size:12px;">WHO/UNICEF nutrition survey calculator. Cluster-adjusted for MUAC, WAZ, stunting. Matches Approaches 2, 8.</p>
       <p style="margin-top:6px;"><a href="https://smartmethodology.org/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">smartmethodology.org →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--mid)">
+      <div class="symbol" style="font-size:14px; color:var(--mid)">SurveyMonkey</div>
+      <p style="font-size:12px;">Quick proportion-based calculator. Good for simple prevalence surveys. Matches Approach 1.</p>
+      <p style="margin-top:6px;"><a href="https://www.surveymonkey.com/learn/research-and-analysis/sample-size-calculator/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">surveymonkey.com →</a></p>
     </div>
     <div class="concept-card" style="border-top-color:var(--mid)">
       <div class="symbol" style="font-size:14px; color:var(--mid)">G*Power</div>
@@ -2076,6 +2172,54 @@ function buildC8Sensitivity(sigma, Z, rho, NR) {
 }
 
 // ── INIT: pre-build on load ───────────────────────────────────────────────────
+
+// ── SCENARIO DEMONSTRATION TABLES ───────────────────────────────────────────
+function buildScenarioTables() {
+  const rho = 0.05, P = 0.742, Z = 1.96, NR = 0.05;
+  const clusterSizes = [5, 10, 15, 20, 25, 30, 35, 40];
+  const margins = [0.04, 0.05, 0.06, 0.065, 0.07, 0.075, 0.08, 0.10];
+  const prefM = 25, prefE = 0.05;
+
+  // Sample size table
+  const nTbl = document.getElementById('scenario_n_table');
+  let nHtml = '<tr><th style="text-align:left">Cluster (m)</th>';
+  margins.forEach(e => nHtml += `<th>\u00b1${(e*100).toFixed(1)}%</th>`);
+  nHtml += '</tr>';
+  clusterSizes.forEach(m => {
+    const deff = 1 + rho * (m - 1);
+    nHtml += `<tr><td>${m}</td>`;
+    margins.forEach(e => {
+      const base = (Z*Z * P * (1-P)) / (e*e);
+      const adj = base * deff;
+      const n = Math.ceil(adj / (1 - NR));
+      const hi = (m === prefM && e === prefE) ? ' class="highlight"' : '';
+      nHtml += `<td${hi}>${n.toLocaleString()}</td>`;
+    });
+    nHtml += '</tr>';
+  });
+  if (nTbl) nTbl.innerHTML = nHtml;
+
+  // Clusters table
+  const cTbl = document.getElementById('scenario_c_table');
+  let cHtml = '<tr><th style="text-align:left">Cluster (m)</th>';
+  margins.forEach(e => cHtml += `<th>\u00b1${(e*100).toFixed(1)}%</th>`);
+  cHtml += '</tr>';
+  clusterSizes.forEach(m => {
+    const deff = 1 + rho * (m - 1);
+    cHtml += `<tr><td>${m}</td>`;
+    margins.forEach(e => {
+      const base = (Z*Z * P * (1-P)) / (e*e);
+      const adj = base * deff;
+      const n = Math.ceil(adj / (1 - NR));
+      const c = Math.ceil(n / m);
+      const hi = (m === prefM && e === prefE) ? ' class="highlight"' : '';
+      cHtml += `<td${hi}>${c}</td>`;
+    });
+    cHtml += '</tr>';
+  });
+  if (cTbl) cTbl.innerHTML = cHtml;
+}
+
 // ── AUTO-CALCULATE ON LOAD ──────────────────────────────────────────────────
 window.addEventListener('load', () => {
   buildCochranScenarios(0.742, 1.96, 0.05);
@@ -2090,6 +2234,7 @@ window.addEventListener('load', () => {
   try { calcTwoMeans(); } catch(e) {}
   try { calcClusterMean(); } catch(e) {}
   try { calcMultiArm(); } catch(e) {}
+  try { buildScenarioTables(); } catch(e) {}
 });
 
 // ── APPROACH 9: MULTI-ARM ALPHA ADJUSTMENT ──────────────────────────────────
@@ -2203,6 +2348,31 @@ function buildMultiArmSensitivity(P1, mdd, deff, alpha, Zb, NR) {
 <!-- ══════════════════════════════════════════════════════════
      AUTHOR
 ══════════════════════════════════════════════════════════ -->
+
+<!-- COMING NEXT -->
+<section style="background:var(--ink); padding:40px 0; margin-top:0;">
+  <div style="max-width:900px; margin:0 auto; padding:0 32px;">
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:center;">
+      <div style="background:var(--accent); color:#fff; font-family:var(--mono); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; padding:6px 14px; border-radius:3px; white-space:nowrap;">Coming Next</div>
+      <div>
+        <div style="font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--warn); margin-bottom:4px;">Series 2 of 2</div>
+        <h3 style="color:#fff; font-size:18px; margin-bottom:6px;">Sample Selection Strategies &amp; Sampling Frameworks</h3>
+      </div>
+    </div>
+    <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:16px 20px;">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--warn); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Series 1 — This Guide</div>
+        <p style="font-size:13px; color:#B8C8D0; margin:0; line-height:1.6;"><strong style="color:#fff;">Sample Size Determination</strong> — answers the question: <em>“How many people do I need in my sample?”</em> You now have the formulas, calculators, and scenarios to arrive at a defensible number.</p>
+      </div>
+      <div style="background:rgba(15,106,140,0.15); border:1px solid rgba(15,106,140,0.3); border-radius:4px; padding:16px 20px;">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Series 2 — Coming Soon</div>
+        <p style="font-size:13px; color:#B8C8D0; margin:0; line-height:1.6;"><strong style="color:#fff;">Sampling Frameworks</strong> — answers the next question: <em>“How do I actually select those people in the community or health facility?”</em> Covering systematic selection, PPS, segmentation, random walk, and facility-based sampling protocols.</p>
+      </div>
+    </div>
+    <p style="font-size:12px; color:#5A6E78; margin-top:14px;">Determining sample size is only half the job. The second series will walk through the practical, field-level steps of translating your calculated n into a concrete list of households, individuals, or records to interview — with templates, field guides, and worked examples from real studies.</p>
+  </div>
+</section>
+<div style="page-break-after:always; height:0;"></div>
 <footer style="background:#F7F9FA; color:var(--ink); padding:48px 0 40px; margin-top:0; border-top:4px solid var(--accent);">
   <div style="max-width:900px; margin:0 auto; padding:0 32px;">
     <div style="font-family:var(--mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:14px;">About the Author</div>
@@ -2237,12 +2407,25 @@ function buildMultiArmSensitivity(P1, mdd, deff, alpha, Zb, NR) {
         <p style="font-size:12px; line-height:1.8; margin-bottom:16px; color:#2A3D47;"><strong style="color:var(--accent);">Research areas</strong><br>
         Survey design &amp; sampling methodology · Predictive analytics · Epidemiology · Survival analysis · Clinical trial design · Programme impact evaluation · Spatial analytics</p>
 
+        <div style="background:#fff; border:1px solid var(--rule); border-radius:4px; padding:12px 16px; margin-bottom:14px;">
+          <div style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:6px;">Get in Touch</div>
+          <p style="font-size:12px; margin:0 0 4px; color:#2A3D47;">Interested in understanding more, or in need of a tutorial?</p>
+          <p style="font-size:13px; margin:0; color:var(--ink);">
+            ✉️ <a href="mailto:anuwasiima@gmail.com" style="color:var(--accent); font-family:var(--mono); font-size:12px;">anuwasiima@gmail.com</a>
+            &nbsp;·&nbsp;
+            📱 <a href="https://wa.me/256779217588" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:12px;">+256 779 217 588</a> (WhatsApp)
+          </p>
+        </div>
+
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
           <a href="https://scholar.google.com/citations?user=nXN6ZAYAAAAJ" target="_blank" style="font-family:var(--mono); font-size:11px; color:var(--accent); text-decoration:none; padding:5px 14px; border:1px solid var(--rule); border-radius:3px; background:#fff;">Google Scholar →</a>
           <a href="https://www.researchgate.net/profile/Afra-Nuwasiima" target="_blank" style="font-family:var(--mono); font-size:11px; color:var(--accent); text-decoration:none; padding:5px 14px; border:1px solid var(--rule); border-radius:3px; background:#fff;">ResearchGate →</a>
           <a href="https://www.linkedin.com/in/afra-nuwasiima-00967664/" target="_blank" style="font-family:var(--mono); font-size:11px; color:var(--accent); text-decoration:none; padding:5px 14px; border:1px solid var(--rule); border-radius:3px; background:#fff;">LinkedIn →</a>
         </div>
       </div>
+    </div>
+    <div style="background:#fff; border:1px solid var(--rule); border-radius:4px; padding:12px 16px; margin-top:20px; text-align:center;">
+      <p style="font-size:13px; margin:0; color:var(--ink);"><strong>Interactive online version with live calculators:</strong> <a href="https://afranuwasiima.github.io/Sample-Size-Determination-Approaches/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:12px;">https://afranuwasiima.github.io/Sample-Size-Determination-Approaches/</a></p>
     </div>
     <hr style="border:none; border-top:1px solid var(--rule); margin:28px 0 16px;">
     <p style="font-size:11px; color:var(--mid); text-align:center;">© 2026 Afra Nuwasiima. This guide is open-access for research and educational use. Cite as: Nuwasiima, A. (2026). <em>Sample Size Determination for Impact Surveys: A Scientific Guide.</em></p>
