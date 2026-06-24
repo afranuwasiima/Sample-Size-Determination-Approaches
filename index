@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sample Size Determination for Impact Surveys — Scientific Guide + Interactive Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap');
+
+  :root {
+    --ink:      #0E1F2B;
+    --paper:    #F7F5F0;
+    --rule:     #D4CFC6;
+    --accent:   #0F6A8C;
+    --accent2:  #008148;
+    --warn:     #F1A01B;
+    --red:      #870101;
+    --mid:      #5A6E78;
+    --light:    #EAF4F8;
+    --light2:   #E8F5EE;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'IBM Plex Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: #fff;
+    padding: 56px 0 40px;
+    border-bottom: 4px solid var(--accent);
+  }
+  .header-inner { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warn);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  h1 span { color: var(--accent); }
+  .header-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: #B8C8D0;
+    max-width: 620px;
+    line-height: 1.7;
+  }
+  .header-meta {
+    margin-top: 24px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(15,106,140,0.25);
+    color: #7ECAE0;
+    padding: 4px 12px;
+    border-radius: 2px;
+    border: 1px solid rgba(15,106,140,0.4);
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-inner a {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mid);
+    text-decoration: none;
+    padding: 14px 16px;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-inner a:hover, .nav-inner a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  main { max-width: 900px; margin: 0 auto; padding: 0 32px 80px; }
+
+  /* ── CONTEXT SECTION ── */
+  .context-section {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+  h3 { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: var(--ink); }
+  p { margin-bottom: 14px; color: #2A3D47; }
+
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .concept-card {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    padding: 18px;
+    border-radius: 2px;
+  }
+  .concept-card .symbol {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .concept-card .label { font-size: 12px; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mid); }
+  .concept-card p { font-size: 13px; margin: 0; color: #445; }
+
+  .formula-box {
+    background: var(--ink);
+    color: #E0EFF5;
+    padding: 20px 24px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.9;
+    margin: 20px 0;
+    border-left: 4px solid var(--accent);
+  }
+  .formula-box .comment { color: #6A8FA0; font-size: 12px; }
+
+  /* ── APPROACH TABS ── */
+  .approaches-section { padding: 48px 0; }
+  .approach-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .tab-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--mid);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .approach-panel { display: none; }
+  .approach-panel.active { display: block; }
+
+  .approach-header {
+    background: var(--light);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--accent);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border-radius: 0 4px 4px 0;
+  }
+  .approach-header h3 { margin-bottom: 4px; font-size: 17px; }
+  .approach-header .use-case {
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--mid);
+    margin-bottom: 8px;
+  }
+  .approach-header p { margin: 0; font-size: 14px; color: #334; }
+
+  /* ── CALCULATOR ── */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media(max-width: 600px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .input-group { margin-bottom: 16px; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--mid);
+    margin-bottom: 6px;
+  }
+  label span { font-family: var(--mono); color: var(--accent); font-weight: 400; }
+  input[type=number], select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    background: #fff;
+    transition: border-color 0.2s;
+  }
+  input[type=number]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(15,106,140,0.1);
+  }
+  .input-hint { font-size: 11px; color: var(--mid); margin-top: 4px; font-style: italic; }
+
+  .calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+  .calc-btn:hover { background: #0A4F6A; }
+
+  .result-panel {
+    background: var(--ink);
+    color: #fff;
+    padding: 24px;
+    border-radius: 4px;
+    margin-top: 20px;
+    display: none;
+  }
+  .result-panel.show { display: block; }
+  .result-panel h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--warn);
+    margin-bottom: 16px;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .result-stat { }
+  .result-stat .val {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--warn);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .result-stat .lbl { font-size: 11px; color: #7A9BAB; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .result-breakdown {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 14px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 2;
+    color: #B0C8D4;
+  }
+  .result-breakdown .step { color: #fff; }
+
+  .deff-table-wrap { overflow-x: auto; margin-top: 24px; }
+  table.deff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+  table.deff-table th {
+    background: var(--ink);
+    color: var(--warn);
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  table.deff-table td {
+    padding: 7px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--rule);
+    color: var(--mid);
+  }
+  table.deff-table tr:hover td { background: var(--light); color: var(--ink); }
+  table.deff-table td:first-child { font-weight: 600; color: var(--ink); text-align: left; background: #fafafa; }
+  table.deff-table .highlight { background: #FEF3CD !important; color: var(--ink) !important; font-weight: 700; }
+
+  /* scenario grid */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .scenario-card {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 14px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .scenario-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .scenario-card.preferred { border-color: var(--accent2); border-width: 2px; background: var(--light2); }
+  .scenario-card.preferred::after {
+    content: 'PREFERRED';
+    position: absolute;
+    top: -9px; right: 10px;
+    font-family: var(--mono);
+    font-size: 9px;
+    background: var(--accent2);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+  }
+  .scenario-card .sc-n { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .scenario-card .sc-label { font-size: 11px; color: var(--mid); margin: 3px 0 6px; }
+  .scenario-card .sc-detail { font-size: 12px; color: #334; }
+
+  /* references */
+  .references {
+    margin-top: 40px;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .references h3 { font-size: 13px; margin-bottom: 12px; color: var(--mid); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--mono); }
+  .references ol { padding-left: 20px; }
+  .references li { font-size: 12px; color: var(--mid); margin-bottom: 6px; line-height: 1.5; }
+  .references a { color: var(--accent); }
+
+  /* alert */
+  .alert {
+    background: #FEF3CD;
+    border-left: 4px solid var(--warn);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #5A4500;
+    border-radius: 0 3px 3px 0;
+    margin: 16px 0;
+  }
+
+  hr.section-rule { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
+
+  /* sensitivity matrix */
+  .matrix-header {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mid);
+    margin: 20px 0 8px;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    body { font-size: 13px; }
+    header { padding: 36px 0 28px; }
+    nav { display: none !important; }
+    main { padding: 0 24px 40px; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 18px; }
+    .calc-btn { display: none; }
+    .result-panel { display: block !important; }
+    .result-panel.show { display: block !important; }
+    section { page-break-inside: avoid; }
+    .approaches-section { page-break-before: auto; }
+    .formula-box { page-break-inside: avoid; }
+    .concept-grid { page-break-inside: avoid; }
+    .deff-table-wrap { page-break-inside: avoid; }
+    .result-panel { page-break-inside: avoid; }
+    .references { page-break-inside: avoid; }
+    footer { page-break-before: always; }
+    a[href]::after { content: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Methodological Guide + Interactive Calculator</div>
+    <h1>Sample Size Determination<br><span>Scenario-Based Approaches</span></h1>
+    <p class="header-sub">A rigorous, open-access guide to choosing the right sample size formula for your study design — from simple prevalence surveys to cluster-based impact evaluations. Each of eight approaches is explained with context, formula derivation, live calculator, sensitivity analysis, and a reporting checklist. Includes finite population correction, ICC reference values, and a common mistakes guide.</p>
+    <div class="header-meta">
+      <span class="meta-pill">9 Approaches + FPC</span>
+      <span class="meta-pill">Proportion: Cochran · Cluster · Two-Arm · Beneficiary · General Pop</span>
+      <span class="meta-pill">Numeric: One-Sample Mean · Two-Sample Means · Cluster Mean</span>
+      <span class="meta-pill">Based on DHS · WHO · UBOS · CONSORT · STROBE Standards</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#context" class="active">Context</a>
+    <a href="#approach1">1 · Simple Prevalence</a>
+    <a href="#approach2">2 · Cluster-Adjusted</a>
+    <a href="#approach3">3 · Two-Arm Impact</a>
+    <a href="#approach4">4 · Beneficiary Survey</a>
+    <a href="#approach5">5 · General Population</a>
+    <a href="#approach6">6 · One-Sample Mean</a>
+    <a href="#approach7">7 · Two-Sample Means</a>
+    <a href="#approach8">8 · Cluster Mean</a>
+    <a href="#approach9">9 · Multi-Arm</a>
+    <a href="#mistakes">Pitfalls</a>
+    <a href="#checklist">Checklist</a>
+    <a href="#summary">Summary</a>
+    <a href="#resources">Resources</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════════════
+     CONTEXT
+══════════════════════════════════════════════════════════ -->
+<section class="context-section" id="context">
+  <div class="section-label">01 — Why Sample Size Matters</div>
+  <h2>Choosing the Right Formula Before You Choose a Number</h2>
+  <p>Sample size is not a single number — it is the output of a set of <strong>design decisions</strong>. The most common mistake in health and development research is applying the Cochran formula to every study regardless of design, then defending an arbitrary number as "statistically sound." The formula you choose must match how you will collect data, what you are trying to measure, and what comparisons you intend to make.</p>
+  <p>This guide covers five scientifically distinct approaches. Each is appropriate for a different study type. The decision tree below helps you select the right one.</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="symbol">P</div>
+      <div class="label">Prevalence / Proportion</div>
+      <p>The estimated value of your key indicator at baseline. Using an empirical, district-specific value (rather than the conservative 50%) reduces sample size by up to 25% with full scientific justification.</p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol">e / d</div>
+      <div class="label">Margin of Error</div>
+      <p>How precise does your estimate need to be? At ±5% your n doubles vs ±7%. In resource-constrained humanitarian settings, ±7–8% is widely accepted.</p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol">ρ</div>
+      <div class="label">Intracluster Correlation</div>
+      <p>When households are sampled in clusters (villages, blocks), observations within the same cluster are more similar to each other. ρ=0.05 is the UDHS average across 48 surveys in Uganda. Consult your country’s DHS or national household survey for local ICC values.</p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol">DEFF</div>
+      <div class="label">Design Effect</div>
+      <p>The inflation factor applied to your base sample size when using cluster sampling. DEFF = 1 + ρ(m–1). At ρ=0.05 and m=10, DEFF=1.45 — you need 45% more households than simple random sampling.</p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol">1–β</div>
+      <div class="label">Statistical Power</div>
+      <p>Only relevant for comparative studies (impact evaluations). Power = probability of detecting a true effect. 80% is the minimum standard. <em>Not applicable to descriptive baselines.</em></p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol">NR</div>
+      <div class="label">Non-Response Buffer</div>
+      <p>A practical inflation to account for households that refuse, are absent, or are ineligible. 5% is standard for community surveys with good access. Inflate to 10–15% in hard-to-reach settings.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:#5A6E78">
+      <div class="symbol">FPC</div>
+      <div class="label">Finite Population Correction</div>
+      <p>When sampling &gt;5% of a known population N, the standard formula overestimates variance. FPC = √((N−n)/(N−1)). Apply n<sub>adj</sub> = n×N / (n+N−1). Always use for beneficiary populations under ~10,000.</p>
+    </div>
+  </div>
+
+  <p style="margin-top:20px; font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:0.06em; color:var(--red);">Numeric / Continuous Outcome Parameters</p>
+  <div class="concept-grid">
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red)">μ</div>
+      <div class="label">Population Mean</div>
+      <p>For continuous outcomes (MUAC, hemoglobin, test scores, income). The target value you want to estimate or compare. Sample size depends on variability (σ), not proportions.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red)">σ</div>
+      <div class="label">Standard Deviation</div>
+      <p>The spread of your outcome in the population. From prior studies, pilot data, or literature. Larger σ = more variability = larger sample needed. The single most critical numeric parameter.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red)">δ</div>
+      <div class="label">Detectable Difference</div>
+      <p>Minimum meaningful difference between group means (e.g. 0.5 kg weight gain, 5 score points). Expressed in the outcome's own units. Smaller δ = much larger sample required.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red)">e</div>
+      <div class="label">Absolute Precision (Means)</div>
+      <p>For one-sample estimation: how close do you need your estimated mean to the true mean? e.g. ±0.5 kg, ±2 mmol/L, ±5 score points. Analogous to margin of error for proportions.</p>
+    </div>
+  </div>
+
+  <div class="alert" style="background:#FEF0F0; border-color:var(--red); color:#4A0000; margin-bottom:20px;">
+    <strong>Proportion vs. Numeric outcomes:</strong> The Cochran formula assumes a binary (yes/no) outcome. If your primary indicator is continuous — MUAC in mm, hemoglobin in g/dL, knowledge score out of 100 — use Approaches 6–8 instead. Applying a proportion formula to a continuous outcome is a methodological error that will be flagged at peer review or IRB.
+  </div>
+
+  <div class="formula-box">
+    <span class="comment">// Decision rule: which approach to use?</span><br>
+    <br>
+    <span class="comment">// ── PROPORTION / BINARY OUTCOMES ──────────────────────</span><br>
+    IF descriptive baseline OR prevalence survey → <strong>Approach 1 (Cochran)</strong><br>
+    IF cluster-based field enumeration → <strong>Approach 2 (Cluster-Adjusted)</strong><br>
+    IF comparing treatment vs. control groups → <strong>Approach 3 (Two-Arm)</strong><br>
+    IF surveying program beneficiaries by strata → <strong>Approach 4 (Beneficiary)</strong><br>
+    IF surveying general population by strata → <strong>Approach 5 (General Population)</strong><br>
+    <br>
+    <span class="comment">// ── NUMERIC / CONTINUOUS OUTCOMES ─────────────────────</span><br>
+    IF estimating a mean (weight, score, distance, cost) → <strong>Approach 6 (One-Sample Mean)</strong><br>
+    IF comparing means between two groups → <strong>Approach 7 (Two-Sample Means)</strong><br>
+    IF cluster sampling with a continuous outcome → <strong>Approach 8 (Cluster Mean)</strong><br>
+    <br>
+    <span class="comment">// ── FINITE POPULATION CORRECTION ─────────────────────</span><br>
+    IF n/N &gt; 0.05 → n_adj = n × N / (n + N − 1)<br>
+    <span class="comment">// Equivalent to: n_adj = n / (1 + (n−1)/N)</span><br>
+    <br>
+    <span class="comment">// ── ADJUSTMENTS ──────────────────────────────────────</span><br>
+    IF sampling &gt;5% of a known population N → Apply <strong>Finite Population Correction</strong> (Approaches 1, 6)<br>
+    IF 3+ treatment arms with multiple comparisons → <strong>Approach 9 (Multi-Arm + α adjustment)</strong><br>
+    IF multiple primary outcomes → Calculate n for each, use the <strong>largest</strong><br>
+    IF subgroup analysis planned → Multiply n by number of subgroups requiring precision
+  </div>
+
+  <div style="background:var(--light2); border:2px solid var(--accent2); border-radius:4px; padding:16px 20px; margin:24px 0;">
+    <div style="font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent2); margin-bottom:6px;">Preferred Parameters for This Organisation</div>
+    <p style="font-size:14px; margin:0; color:var(--ink); line-height:1.6;">
+      <strong>Margin of error:</strong> ±5% (e = 0.05) &nbsp;·&nbsp;
+      <strong>Confidence level:</strong> 95% (Z = 1.96) &nbsp;·&nbsp;
+      <strong>Statistical power:</strong> 80% (1–β = 0.80, for comparative designs) &nbsp;·&nbsp;
+      <strong>Non-response buffer:</strong> 5% (standard) to 10–15% (hard-to-reach)
+    </p>
+    <p style="font-size:12px; margin:8px 0 0; color:var(--mid);">All calculators below default to these values. Deviations must be justified in your methods section.</p>
+  </div>
+
+  <div style="background:#fff; border:1px solid var(--rule); border-left:4px solid var(--accent2); padding:20px 24px; margin:24px 0; border-radius:0 4px 4px 0;">
+    <h3 style="color:var(--accent2); margin-bottom:8px;">Why Plot Scenarios?</h3>
+    <p style="font-size:14px; margin-bottom:10px;">Sample size determination is rarely a single calculation — it is a <strong>negotiation between scientific rigour and operational feasibility</strong>. Running multiple scenarios helps you find the point where statistical validity meets budget, logistics, and timeline constraints.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+      <div style="background:var(--light); padding:14px; border-radius:3px;">
+        <div style="font-family:var(--mono); font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Scientific Rigour</div>
+        <p style="font-size:13px; margin:0; color:#334;">Tighter precision (±5%) and higher power (90%) produce more defensible estimates. But they require larger samples — sometimes 2–3× the "good enough" scenario. When publishing in peer-reviewed journals or submitting to an IRB, the higher-rigour scenario is what reviewers expect.</p>
+      </div>
+      <div style="background:var(--light2); padding:14px; border-radius:3px;">
+        <div style="font-family:var(--mono); font-size:11px; color:var(--accent2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Operational Feasibility</div>
+        <p style="font-size:13px; margin:0; color:#334;">Budget caps, enumerator availability, geographic access, and survey duration often set an upper bound on sample size. A ±7–8% scenario may be the largest you can field. Plotting both scenarios side by side lets you present the trade-off transparently to funders and programme teams.</p>
+      </div>
+    </div>
+    <p style="font-size:13px; margin-top:12px; color:var(--mid); font-style:italic;">Each calculator below includes a scenario comparison or sensitivity table. Use them to present 2–3 options in your protocol: a preferred (high-rigour) scenario, a feasible (budget-fit) alternative, and the minimum acceptable threshold. Document the rationale for your final choice in the methods section.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 1 — COCHRAN / SIMPLE PREVALENCE
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach1">
+  <div class="section-label">Approach 01</div>
+  <h2>Simple Prevalence (Cochran Formula)</h2>
+
+  <div class="approach-header">
+    <div class="use-case">USE WHEN → Descriptive baseline · Single-arm prevalence survey · Direct household selection from a list</div>
+    <h3>Cross-sectional surveys estimating the prevalence of a single indicator</h3>
+    <p>The Cochran (1977) formula estimates the minimum sample needed to estimate a proportion P within a specified margin of error, at a given confidence level. It assumes simple random sampling — no clustering, no stratification beyond what is explicitly modeled. This is the appropriate formula when you have access to a household register (UNHCR, OPM, UBOS) and can select households directly without village-level clustering.</p>
+  </div>
+
+  <div class="formula-box">
+    n = Z² × P(1–P) / e²<br>
+    <span class="comment">// Z = Z-score for confidence level (1.96 for 95% CI)</span><br>
+    <span class="comment">// P = estimated prevalence of key indicator</span><br>
+    <span class="comment">// e = desired margin of error (precision)</span><br><br>
+    n_final = CEILING( n / (1 – NR), 1 )<br>
+    <span class="comment">// NR = non-response rate (e.g. 0.05 for 5%)</span>
+  </div>
+
+  <div class="alert">⚠ Using P=0.50 is the most conservative assumption and maximises sample size. If you have a district-specific or national estimate for your key indicator, use it — this reduces n by up to 25% with full scientific justification. Always cite your source.</div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Prevalence <span>(P)</span></label>
+        <input type="number" id="c1_p" value="0.742" step="0.001" min="0.01" max="0.99">
+        <div class="input-hint">e.g. 0.742 for ANC4 coverage 74.2% (2024 AHSPR, Adjumani). At ±5% with P=0.742: n≈296.</div>
+      </div>
+      <div class="input-group">
+        <label>Margin of Error <span>(e)</span></label>
+        <input type="number" id="c1_e" value="0.05" step="0.005" min="0.01" max="0.25">
+        <div class="input-hint"><strong>±5% preferred.</strong> 0.05 = ±5%, 0.07 = ±7%, 0.10 = ±10%</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Confidence Level <span>(Z)</span></label>
+        <select id="c1_z">
+          <option value="1.96" selected>95% (Z = 1.96) — Standard</option>
+          <option value="1.645">90% (Z = 1.645) — Exploratory</option>
+          <option value="2.576">99% (Z = 2.576) — High rigor</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c1_nr" value="0.05" step="0.01" min="0" max="0.3">
+        <div class="input-hint">0.05 = 5% buffer. Use 0.10–0.15 for hard-to-reach settings.</div>
+      </div>
+      <div class="input-group">
+        <label>Population Size <span>(N)</span> — FPC</label>
+        <input type="number" id="c1_N" value="0" step="1" min="0" max="10000000">
+        <div class="input-hint">Enter known population size. Leave 0 to skip FPC. FPC is applied when n/N &gt; 5%.</div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcCochran()">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c1_result">
+    <h4>Calculation Results — Cochran Formula</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c1_raw">—</div><div class="lbl">Raw n</div></div>
+      <div class="result-stat"><div class="val" id="c1_final">—</div><div class="lbl">Final n (with NR buffer)</div></div>
+      <div class="result-stat"><div class="val" id="c1_half">—</div><div class="lbl">Per stratum (÷2)</div></div>
+    </div>
+    <div class="result-breakdown" id="c1_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>Scenario Comparison (P = 0.742, Z = 95%, NR = 5%) — Preferred: ±5%</h3>
+  <div class="scenario-grid" id="c1_scenarios"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 2 — CLUSTER-ADJUSTED
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach2" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 02</div>
+  <h2>Cluster-Adjusted Sample Size</h2>
+
+  <div class="approach-header">
+    <div class="use-case">USE WHEN → Household selection via villages/blocks · Refugee settlement enumeration · No complete household list available</div>
+    <h3>Single-arm descriptive survey using cluster (two-stage) sampling</h3>
+    <p>When households cannot be selected directly — common in refugee settlements where UNHCR/OPM registers are organized by block or village — a two-stage cluster approach is used: first select clusters (villages, enumeration areas), then select households within each cluster. This introduces intracluster correlation (households in the same village are more similar), which inflates the effective sample size via the Design Effect (DEFF). Ignoring DEFF in a clustered design produces artificially narrow confidence intervals and underpowered estimates.</p>
+  </div>
+
+  <div class="formula-box">
+    DEFF = 1 + ρ(m – 1)<br>
+    <span class="comment">// ρ = intracluster correlation coefficient (ICC)</span><br>
+    <span class="comment">// m = cluster size (households per cluster)</span><br><br>
+    n_cluster = [Z² × P(1–P) / e²] × DEFF<br>
+    n_final = CEILING( n_cluster / (1 – NR), 1 )<br>
+    C = CEILING( n_final / m, 1 )<br>
+    <span class="comment">// C = number of clusters needed</span>
+  </div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Prevalence <span>(P)</span></label>
+        <input type="number" id="c2_p" value="0.742" step="0.001" min="0.01" max="0.99">
+      </div>
+      <div class="input-group">
+        <label>Margin of Error <span>(e)</span></label>
+        <input type="number" id="c2_e" value="0.05" step="0.005" min="0.01" max="0.25">
+      </div>
+      <div class="input-group">
+        <label>ICC <span>(ρ)</span></label>
+        <input type="number" id="c2_rho" value="0.05" step="0.01" min="0.01" max="0.2">
+        <div class="input-hint">UDHS Uganda average: 0.04–0.07 across 48 surveys. Use 0.05 as default.</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Cluster Size <span>(m)</span></label>
+        <input type="number" id="c2_m" value="10" step="1" min="2" max="50">
+        <div class="input-hint">Households per cluster. 5–15 is operationally standard.</div>
+      </div>
+      <div class="input-group">
+        <label>Confidence Level <span>(Z)</span></label>
+        <select id="c2_z">
+          <option value="1.96" selected>95% (Z = 1.96)</option>
+          <option value="1.645">90% (Z = 1.645)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c2_nr" value="0.05" step="0.01" min="0" max="0.3">
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcCluster()">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c2_result">
+    <h4>Calculation Results — Cluster-Adjusted Formula</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c2_deff">—</div><div class="lbl">Design Effect</div></div>
+      <div class="result-stat"><div class="val" id="c2_raw">—</div><div class="lbl">Cluster-Adjusted n</div></div>
+      <div class="result-stat"><div class="val" id="c2_final">—</div><div class="lbl">Final n (with NR)</div></div>
+      <div class="result-stat"><div class="val" id="c2_clusters">—</div><div class="lbl">Clusters Needed</div></div>
+      <div class="result-stat"><div class="val" id="c2_half">—</div><div class="lbl">Per Stratum (÷2)</div></div>
+    </div>
+    <div class="result-breakdown" id="c2_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>DEFF Sensitivity Matrix (ρ × Cluster Size)</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Understand how your design effect changes as you vary the ICC assumption and cluster size. Higher DEFF = larger required sample.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="deff_matrix"></table>
+  </div>
+
+  <hr class="section-rule">
+  <h3>Margin of Error × Cluster Size Sensitivity (Adjusted n, ρ=0.05, NR=5%) — Preferred: ±5%</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Response-rate adjusted total sample size. Use P from your calculator input above.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="c2_sensitivity"></table>
+  </div>
+
+  <hr class="section-rule">
+  <h3>ICC Reference Values by Domain</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Evidence-based ICC ranges from meta-analyses and large-scale surveys. Use the value closest to your study design when prior ICC data is unavailable.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="icc_reference">
+      <tr><th style="text-align:left">Domain / Outcome</th><th>Cluster Level</th><th>Typical ICC</th><th>IQR / Range</th><th>Source</th></tr>
+      <tr><td>Health outcomes (school-based)</td><td>School</td><td>0.031</td><td>0.011–0.08</td><td><a href="https://pubmed.ncbi.nlm.nih.gov/36997102/" target="_blank" style="color:var(--accent)">J Clin Epi 2023</a></td></tr>
+      <tr><td>Health outcomes (school-based)</td><td>Classroom</td><td>0.063</td><td>0.024–0.10</td><td><a href="https://pubmed.ncbi.nlm.nih.gov/36997102/" target="_blank" style="color:var(--accent)">J Clin Epi 2023</a></td></tr>
+      <tr><td>Substance use (adolescent)</td><td>School</td><td>0.06–0.21</td><td>Varies by substance</td><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5757888/" target="_blank" style="color:var(--accent)">ESPAD / PMC 2018</a></td></tr>
+      <tr><td>Psychosocial health</td><td>School</td><td>0.01–0.07</td><td>Self-esteem, depression</td><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5757888/" target="_blank" style="color:var(--accent)">ESPAD / PMC 2018</a></td></tr>
+      <tr><td>Immunization coverage</td><td>Village/EA</td><td>0.04–0.07</td><td>DEFF ≈ 1.22</td><td><a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf" target="_blank" style="color:var(--accent)">DHS6 Manual (PDF)</a></td></tr>
+      <tr><td>Anthropometric (MUAC, WAZ)</td><td>Village/EA</td><td>0.02–0.05</td><td>Lower for Z-scores</td><td><a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf" target="_blank" style="color:var(--accent)">DHS6 Manual (PDF)</a></td></tr>
+      <tr><td>Maternal health outcomes</td><td>Hospital/Facility</td><td>0.014</td><td>Most &lt; 0.10</td><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4000432/" target="_blank" style="color:var(--accent)">EMIP / PMC 2014</a></td></tr>
+      <tr><td>Behavioral (smoking, diet)</td><td>Practice/Clinic</td><td>&lt; 0.10</td><td>Intent-to-change ≤ 0.007</td><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3354973/" target="_blank" style="color:var(--accent)">Ann Fam Med / PMC</a></td></tr>
+      <tr><td>Socio-demographic (religion, caste)</td><td>PSU</td><td>0.03–0.71</td><td>High for social vars</td><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9798159/" target="_blank" style="color:var(--accent)">NFHS / PMC 2022</a></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 3 — TWO-ARM IMPACT EVALUATION
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach3" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 03</div>
+  <h2>Two-Arm Impact Evaluation</h2>
+
+  <div class="approach-header">
+    <div class="use-case">USE WHEN → RCT or quasi-experimental design · Treatment vs. control comparison · Pre-post with comparator group</div>
+    <h3>Comparative study requiring statistical power to detect a minimum detectable difference</h3>
+    <p>Impact evaluations compare an intervention group to a control group, requiring power to detect a true effect if one exists. This requires specifying both a confidence level (α) and statistical power (1–β). The minimum detectable difference (MDD) is the smallest effect you want to reliably detect. A pre-specified design effect accounts for clustering at the district or village level. This approach produces significantly larger samples than single-arm designs and is not appropriate for descriptive baselines.</p>
+  </div>
+
+  <div class="formula-box">
+    n_per_arm = DEFF × [Z_α/2 + Z_β]² × [P₁(1–P₁) + P₂(1–P₂)] / (P₁ – P₂)²<br>
+    <span class="comment">// P₁ = baseline prevalence, P₂ = P₁ + MDD (expected endline)</span><br>
+    <span class="comment">// Z_α/2 = 1.96 (95% CI), Z_β = 0.84 (80% power)</span><br>
+    <span class="comment">// DEFF applied per arm (e.g. 1.22 from DHS immunization indicator)</span><br>
+    n_total = 2 × n_per_arm (one per arm)<br>
+    n_final = CEILING( n_total / (1 – NR), 1 )
+  </div>
+
+  <div class="alert">⚠ Power (1–β) is only relevant here. Do not include power in a descriptive baseline formula — it is not applicable and will mislead reviewers.</div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Baseline Prevalence <span>(P₁)</span></label>
+        <input type="number" id="c3_p1" value="0.569" step="0.001" min="0.01" max="0.99">
+        <div class="input-hint">e.g. 0.569 for FIC baseline, 0.20 for dropout rate</div>
+      </div>
+      <div class="input-group">
+        <label>Min. Detectable Difference <span>(MDD)</span></label>
+        <input type="number" id="c3_mdd" value="0.10" step="0.005" min="0.01" max="0.5">
+        <div class="input-hint">Expected change from baseline to endline. e.g. 0.10 = 10 percentage points</div>
+      </div>
+      <div class="input-group">
+        <label>Design Effect <span>(DEFF)</span></label>
+        <input type="number" id="c3_deff" value="1.22" step="0.01" min="1" max="5">
+        <div class="input-hint">1.22 = DHS estimate for immunization coverage indicator</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Confidence Level <span>(Z_α)</span></label>
+        <select id="c3_za">
+          <option value="1.96" selected>95% (Z = 1.96)</option>
+          <option value="1.645">90% (Z = 1.645)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Statistical Power <span>(1–β)</span></label>
+        <select id="c3_zb">
+          <option value="0.842" selected>80% (Z = 0.842) — Preferred</option>
+          <option value="1.036">85% (Z = 1.036)</option>
+          <option value="1.282">90% (Z = 1.282)</option>
+          <option value="1.645">95% (Z = 1.645)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c3_nr" value="0.05" step="0.01" min="0" max="0.3">
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcTwoArm()">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c3_result">
+    <h4>Calculation Results — Two-Arm Impact Evaluation</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c3_narm">—</div><div class="lbl">n per Arm</div></div>
+      <div class="result-stat"><div class="val" id="c3_ntotal">—</div><div class="lbl">Total n (both arms)</div></div>
+      <div class="result-stat"><div class="val" id="c3_final">—</div><div class="lbl">Final n (with NR)</div></div>
+    </div>
+    <div class="result-breakdown" id="c3_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>Power × MDD Sensitivity (DEFF=1.22, NR=5%) — 80% Power Preferred</h3>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="c3_sensitivity"></table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 4 — BENEFICIARY SAMPLE
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach4" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 04</div>
+  <h2>Beneficiary Survey (Cluster Enumeration Area)</h2>
+
+  <div class="approach-header">
+    <div class="use-case">USE WHEN → Surveying program beneficiaries · National statistical body enumeration areas as clusters (e.g. UBOS in Uganda) · Known strata (e.g. program offices)</div>
+    <h3>Stratified cluster sample for beneficiary population using standard error parameterization</h3>
+    <p>This approach uses the number of clusters (enumeration areas) as the primary output, parameterized by standard error rather than margin of error. It is appropriate when sampling from a defined beneficiary population organized in known spatial units (national statistical body enumeration areas, program zones), and when the primary interest is ensuring adequate representation across strata rather than achieving a specific prevalence precision.</p>
+  </div>
+
+  <div class="formula-box">
+    C = P(1–P) × DEFF / (SE² × b)<br>
+    <span class="comment">// C = number of clusters (enumeration areas)</span><br>
+    <span class="comment">// b = cluster size (persons per EA)</span><br>
+    <span class="comment">// SE = standard error (not margin of error)</span><br>
+    <span class="comment">// DEFF = design effect (typically 2 for beneficiary surveys)</span><br>
+    n = C × b   (total sample)<br>
+    n_strata = n × strata   (total across all program offices/zones)
+  </div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Prevalence <span>(P)</span></label>
+        <input type="number" id="c4_p" value="0.5" step="0.001" min="0.01" max="0.99">
+        <div class="input-hint">Use 0.5 for maximum sample size when multiple indicators tracked.</div>
+      </div>
+      <div class="input-group">
+        <label>Standard Error <span>(SE)</span></label>
+        <input type="number" id="c4_se" value="0.05" step="0.005" min="0.01" max="0.15">
+        <div class="input-hint">Not margin of error. SE = e/Z (e.g. SE≈0.025 corresponds to ±5% at 95% CI)</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Cluster Size <span>(b)</span></label>
+        <input type="number" id="c4_b" value="25" step="1" min="5" max="100">
+        <div class="input-hint">Households or persons per enumeration area</div>
+      </div>
+      <div class="input-group">
+        <label>Design Effect <span>(DEFF)</span></label>
+        <input type="number" id="c4_deff" value="2" step="0.1" min="1" max="5">
+        <div class="input-hint">DEFF=2 is standard for beneficiary surveys without prior ICC data</div>
+      </div>
+      <div class="input-group">
+        <label>Number of Strata</label>
+        <input type="number" id="c4_strata" value="11" step="1" min="1" max="50">
+        <div class="input-hint">e.g. 10 program offices + 1 sub-region = 11. Adapt strata to your country context.</div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcBeneficiary()">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c4_result">
+    <h4>Calculation Results — Beneficiary Survey</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c4_clusters">—</div><div class="lbl">Clusters per Stratum</div></div>
+      <div class="result-stat"><div class="val" id="c4_n_stratum">—</div><div class="lbl">n per Stratum</div></div>
+      <div class="result-stat"><div class="val" id="c4_total">—</div><div class="lbl">Total n (all strata)</div></div>
+      <div class="result-stat"><div class="val" id="c4_total_clusters">—</div><div class="lbl">Total Clusters</div></div>
+    </div>
+    <div class="result-breakdown" id="c4_steps"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 5 — GENERAL POPULATION
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach5" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 05</div>
+  <h2>General Population Survey</h2>
+
+  <div class="approach-header">
+    <div class="use-case">USE WHEN → Surveying non-beneficiary or general population · Known population-level prevalence · Stratified by region or program zone</div>
+    <h3>Stratified cluster sample for general population using known prevalence and standard error</h3>
+    <p>Identical in structure to Approach 4 but uses a population-level prevalence estimate for the key outcome, rather than defaulting to P=0.50. This is appropriate when surveying the general population (not just program beneficiaries) where prior data exists on outcome prevalence. The lower P reduces required sample size, but the DEFF and stratification structure remain the same.</p>
+  </div>
+
+  <div class="formula-box">
+    C = P(1–P) × DEFF / (SE² × b)<br>
+    n = C × b × strata<br>
+    <span class="comment">// Same formula as Approach 4 but P is estimated from population data</span><br>
+    <span class="comment">// e.g. P=0.36 for a known 36% outcome prevalence in general population</span>
+  </div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Population Prevalence <span>(P)</span></label>
+        <input type="number" id="c5_p" value="0.36" step="0.001" min="0.01" max="0.99">
+        <div class="input-hint">Use a population-level estimate from a national survey or DHIS2</div>
+      </div>
+      <div class="input-group">
+        <label>Standard Error <span>(SE)</span></label>
+        <input type="number" id="c5_se" value="0.05" step="0.005" min="0.01" max="0.15">
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Cluster Size <span>(b)</span></label>
+        <input type="number" id="c5_b" value="25" step="1" min="5" max="100">
+      </div>
+      <div class="input-group">
+        <label>Design Effect <span>(DEFF)</span></label>
+        <input type="number" id="c5_deff" value="2" step="0.1" min="1" max="5">
+      </div>
+      <div class="input-group">
+        <label>Number of Strata</label>
+        <input type="number" id="c5_strata" value="11" step="1" min="1" max="50">
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcGenPop()">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c5_result">
+    <h4>Calculation Results — General Population Survey</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c5_clusters">—</div><div class="lbl">Clusters per Stratum</div></div>
+      <div class="result-stat"><div class="val" id="c5_n_stratum">—</div><div class="lbl">n per Stratum</div></div>
+      <div class="result-stat"><div class="val" id="c5_total">—</div><div class="lbl">Total n (all strata)</div></div>
+      <div class="result-stat"><div class="val" id="c5_total_clusters">—</div><div class="lbl">Total Clusters</div></div>
+    </div>
+    <div class="result-breakdown" id="c5_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- REFERENCES -->
+  <div class="references">
+    <h3>References — Proportion-Based Approaches</h3>
+    <ol>
+      <li>Cochran, W.G. (1977). <em>Sampling Techniques</em> (3rd ed.). John Wiley & Sons. <a href="https://iris.who.int/items/9c2e5da4-3785-4fec-9dbc-841e4ae0d98c" target="_blank" style="color:var(--accent)">[WHO IRIS]</a> — Source of the base prevalence formula (Approaches 1–2).</li>
+      <li>DHS Program. (2012). <em>DHS6 Sampling and Household Listing Manual</em>. ICF International. <a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf" target="_blank" style="color:var(--accent)">[PDF]</a> — Source of ρ=0.04–0.07 across 48 Uganda UDHS surveys; DEFF=1.22 for immunization.</li>
+      <li>Campbell, M.K. et al. (2023). Intracluster correlation coefficients from school-based cluster randomized trials. <em>J Clinical Epidemiology</em>, 158, 81–90. <a href="https://pubmed.ncbi.nlm.nih.gov/36997102/" target="_blank" style="color:var(--accent)">[PubMed]</a> — Meta-analysis of 246 CRTs: median school-level ICC = 0.031.</li>
+      <li>Hemming, K. et al. (2017). The stepped wedge cluster randomised trial. <em>BMJ</em>, 358, j3064. <a href="https://www.bmj.com/content/358/bmj.j3064" target="_blank" style="color:var(--accent)">[BMJ]</a></li>
+      <li>Donner, A. & Klar, N. (2000). <em>Design and Analysis of Cluster Randomization Trials in Health Research</em>. Arnold, London. — Foundational text on ICC and DEFF.</li>
+      <li>Killip, S., Mahfoud, Z., & Pearce, K. (2004). What is an intracluster correlation coefficient? <em>Annals of Family Medicine</em>, 2(3), 204–208. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3354973/" target="_blank" style="color:var(--accent)">[PMC]</a></li>
+      <li>Adams, G. et al. (2004). Patterns of ICCs from primary care research. <em>BMC Med Res Methodology</em>, 4, 18. <a href="https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-11-102" target="_blank" style="color:var(--accent)">[BMC]</a></li>
+    </ol>
+  </div>
+</section>
+
+
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 6 — ONE-SAMPLE MEAN
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach6" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 06 — Numeric Outcome</div>
+  <h2>One-Sample Mean Estimation</h2>
+
+  <div class="approach-header" style="border-left-color:var(--red); background:#FEF7F7;">
+    <div class="use-case">USE WHEN → Estimating a population mean · Single continuous indicator · No comparison group · e.g. mean MUAC, mean hemoglobin, mean knowledge score</div>
+    <h3>Cross-sectional survey to estimate a single population mean within a specified absolute precision</h3>
+    <p>When your primary outcome is a continuous (numeric) variable — weight, height, score, income, distance — you cannot use the Cochran proportion formula. Instead, sample size is driven by the population standard deviation (σ) and the absolute precision (e) you need around your estimated mean. The key challenge is obtaining a reliable estimate of σ from prior studies, pilot data, or published literature for a similar population.</p>
+  </div>
+
+  <div class="formula-box">
+    n = (Z × σ / e)²<br>
+    <span class="comment">// Z = Z-score for confidence level (1.96 for 95% CI)</span><br>
+    <span class="comment">// σ = population standard deviation of the outcome</span><br>
+    <span class="comment">// e = desired absolute precision (in same units as outcome)</span><br>
+    <span class="comment">//     e.g. if MUAC in mm, e=5 means estimate within ±5mm of true mean</span><br><br>
+    n_final = CEILING( n / (1 – NR), 1 )
+  </div>
+
+  <div class="alert">⚠ σ is the hardest parameter to estimate for numeric outcomes. Use: (1) a prior study in the same population, (2) a small pilot survey (n=20–30), or (3) the empirical rule: σ ≈ Range/4 if you know the plausible min/max of the outcome. Always document your σ source — reviewers will ask.</div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Standard Deviation <span>(σ)</span></label>
+        <input type="number" id="c6_sigma" value="1.5" step="0.1" min="0.01" max="100">
+        <div class="input-hint">In same units as outcome. e.g. σ=1.5 for hemoglobin in g/dL; σ=12 for MUAC in mm; σ=15 for score out of 100.</div>
+      </div>
+      <div class="input-group">
+        <label>Absolute Precision <span>(e)</span></label>
+        <input type="number" id="c6_e" value="0.5" step="0.1" min="0.01" max="50">
+        <div class="input-hint">How close to the true mean? Same units as σ. e.g. ±0.5 g/dL hemoglobin; ±5mm MUAC; ±5 score points.</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Confidence Level <span>(Z)</span></label>
+        <select id="c6_z">
+          <option value="1.96" selected>95% (Z = 1.96)</option>
+          <option value="1.645">90% (Z = 1.645)</option>
+          <option value="2.576">99% (Z = 2.576)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c6_nr" value="0.05" step="0.01" min="0" max="0.3">
+      </div>
+      <div class="input-group">
+        <label>Population Size <span>(N)</span> — FPC</label>
+        <input type="number" id="c6_N" value="0" step="1" min="0" max="10000000">
+        <div class="input-hint">Enter known population size. Leave 0 to skip FPC.</div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcOneMean()" style="background:var(--red)">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c6_result">
+    <h4>Calculation Results — One-Sample Mean</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c6_raw">—</div><div class="lbl">Raw n</div></div>
+      <div class="result-stat"><div class="val" id="c6_final">—</div><div class="lbl">Final n (with NR)</div></div>
+      <div class="result-stat"><div class="val" id="c6_half">—</div><div class="lbl">Per stratum (÷2)</div></div>
+    </div>
+    <div class="result-breakdown" id="c6_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>σ × Precision Sensitivity Table (Z=95%, NR=5%)</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Final NR-adjusted sample size across combinations of standard deviation and absolute precision. Highlighted row = your current σ.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="c6_sensitivity"></table>
+  </div>
+
+  <hr class="section-rule">
+  <div class="approach-header" style="border-left-color:var(--red); background:#FEF7F7; margin-top:0;">
+    <h3>Real-World σ Reference Values</h3>
+    <p style="margin:0; font-size:13px;">Common continuous outcomes in MNCH/nutrition studies with typical σ values from East African literature:</p>
+  </div>
+  <div class="concept-grid" style="margin-top:16px;">
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Hemoglobin</div>
+      <div class="label">σ ≈ 1.5–2.0 g/dL</div>
+      <p>For women of reproductive age in sub-Saharan Africa. Use e=0.5 g/dL for adequate precision → n≈139 at 95% CI.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">MUAC</div>
+      <div class="label">σ ≈ 15–25 mm</div>
+      <p>Mid-Upper Arm Circumference in children under 5. Use e=5mm → n≈97 at σ=25, 95% CI.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Knowledge Score</div>
+      <div class="label">σ ≈ 10–20 points</div>
+      <p>Out of 100-point scale. Use e=5 points → n≈62 at σ=15, 95% CI.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Weight-for-Age Z</div>
+      <div class="label">σ ≈ 1.0–1.5</div>
+      <p>WHO Z-scores are standardized; σ close to 1.0 by definition in reference population. Use e=0.3 → n≈43.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 7 — TWO-SAMPLE MEANS
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach7" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 07 — Numeric Outcome</div>
+  <h2>Two-Sample Means Comparison</h2>
+
+  <div class="approach-header" style="border-left-color:var(--red); background:#FEF7F7;">
+    <div class="use-case">USE WHEN → Comparing mean outcomes between intervention vs. control · Pre-post with comparator group · Continuous primary endpoint in an impact evaluation</div>
+    <h3>Powered comparison of means between two independent groups with a minimum detectable difference</h3>
+    <p>When your impact evaluation tests whether an intervention changes a continuous outcome (e.g. mean hemoglobin increases, mean MUAC improves, mean knowledge score rises), you need statistical power to detect a specified minimum difference (δ) between group means. This formula requires both a confidence level (α) and power (1–β), and produces one sample size per arm. The allocation ratio (k) allows unequal group sizes — common when control communities are fewer or more expensive to access.</p>
+  </div>
+
+  <div class="formula-box">
+    n₁ = (Z_α + Z_β)² × σ² × (1 + 1/k) / δ²<br>
+    <span class="comment">// n₁ = sample size for intervention arm</span><br>
+    <span class="comment">// σ = pooled standard deviation (assume equal across arms)</span><br>
+    <span class="comment">// δ = minimum detectable difference between means</span><br>
+    <span class="comment">// k = allocation ratio (n₁/n₂); k=1 for equal groups</span><br>
+    <span class="comment">// Z_α = 1.96 (95% CI), Z_β = 0.842 (80% power)</span><br><br>
+    n₂ = n₁ / k<br>
+    n_total = CEILING( (n₁ + n₂) / (1 – NR), 1 )
+  </div>
+
+  
+  <div class="alert" style="background:#FEF7F7; border-color:var(--red); color:#4A0000;">
+    <strong>Effect size conventions (Cohen's d = δ/σ):</strong> Small = 0.2, Medium = 0.5, Large = 0.8. In development and education research, a detectable effect of d=0.3–0.5 is typical. For nutrition interventions in East Africa, δ=0.5 g/dL hemoglobin with σ=1.5 gives d=0.33 (small-medium). Always justify δ from programmatic significance, not statistical convention alone.
+  </div>
+  <div class="alert">⚠ δ must be the <strong>minimum clinically/programmatically meaningful difference</strong> — not just any detectable difference. Too-small δ inflates sample size massively. Consult subject-matter experts: a 0.5 g/dL hemoglobin difference may be statistically detectable but clinically irrelevant. A 1.0 g/dL difference is the standard threshold in many nutrition studies.</div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Pooled Std Deviation <span>(σ)</span></label>
+        <input type="number" id="c7_sigma" value="1.5" step="0.1" min="0.01" max="100">
+        <div class="input-hint">Assumed equal across arms. From prior data or pilot.</div>
+      </div>
+      <div class="input-group">
+        <label>Min. Detectable Difference <span>(δ)</span></label>
+        <input type="number" id="c7_delta" value="0.5" step="0.1" min="0.01" max="50">
+        <div class="input-hint">Smallest meaningful difference between group means. Same units as σ.</div>
+      </div>
+      <div class="input-group">
+        <label>Allocation Ratio <span>(k = n₁/n₂)</span></label>
+        <input type="number" id="c7_ratio" value="1" step="0.1" min="0.5" max="5">
+        <div class="input-hint">1 = equal groups. 2 = twice as many in intervention arm.</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Confidence Level <span>(Z_α)</span></label>
+        <select id="c7_za">
+          <option value="1.96" selected>95% (Z = 1.96)</option>
+          <option value="1.645">90% (Z = 1.645)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Statistical Power <span>(1–β)</span></label>
+        <select id="c7_zb">
+          <option value="0.842" selected>80% (Z = 0.842) — Preferred</option>
+          <option value="1.036">85% (Z = 1.036)</option>
+          <option value="1.282">90% (Z = 1.282)</option>
+          <option value="1.645">95% (Z = 1.645)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c7_nr" value="0.05" step="0.01" min="0" max="0.3">
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcTwoMeans()" style="background:var(--red)">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c7_result">
+    <h4>Calculation Results — Two-Sample Means Comparison</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c7_n1">—</div><div class="lbl">n — Intervention Arm</div></div>
+      <div class="result-stat"><div class="val" id="c7_n2">—</div><div class="lbl">n — Control Arm</div></div>
+      <div class="result-stat"><div class="val" id="c7_total">—</div><div class="lbl">Total n (NR-adjusted)</div></div>
+    </div>
+    <div class="result-breakdown" id="c7_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>σ × δ Sensitivity Table (Equal arms, 80% power, 95% CI, NR=5%)</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Total NR-adjusted sample size (both arms). Highlighted row = your current σ.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="c7_sensitivity"></table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     APPROACH 8 — CLUSTER MEAN
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="approach8" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 08 — Numeric Outcome</div>
+  <h2>Cluster-Adjusted Mean Estimation</h2>
+
+  <div class="approach-header" style="border-left-color:var(--red); background:#FEF7F7;">
+    <div class="use-case">USE WHEN → Continuous outcome + cluster-based field sampling · Villages/blocks as primary sampling unit · e.g. mean MUAC survey by cluster, mean score across schools</div>
+    <h3>One-sample mean estimation with design effect adjustment for cluster sampling</h3>
+    <p>Combines Approach 6 (mean estimation) with Approach 2 (cluster adjustment). When households or individuals are sampled by cluster (village, school, block) rather than directly, the design effect inflates the simple random sample size required. The ICC (ρ) and cluster size (m) together determine the DEFF. This is the correct approach for nutrition surveys in refugee settlements where individuals are grouped in household blocks, or for school-based assessments where classrooms are the sampling unit.</p>
+  </div>
+
+  <div class="formula-box">
+    DEFF = 1 + ρ(m – 1)<br>
+    n_base = (Z × σ / e)²          <span class="comment">// same as Approach 6</span><br>
+    n_cluster = n_base × DEFF<br>
+    n_final = CEILING( n_cluster / (1 – NR), 1 )<br>
+    C = CEILING( n_final / m, 1 )   <span class="comment">// number of clusters</span>
+  </div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Standard Deviation <span>(σ)</span></label>
+        <input type="number" id="c8_sigma" value="1.5" step="0.1" min="0.01" max="100">
+      </div>
+      <div class="input-group">
+        <label>Absolute Precision <span>(e)</span></label>
+        <input type="number" id="c8_e" value="0.5" step="0.1" min="0.01" max="50">
+      </div>
+      <div class="input-group">
+        <label>ICC <span>(ρ)</span></label>
+        <input type="number" id="c8_rho" value="0.05" step="0.01" min="0.01" max="0.3">
+        <div class="input-hint">For continuous outcomes, ρ is often lower than for binary outcomes. 0.02–0.05 is typical for anthropometric measures.</div>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Cluster Size <span>(m)</span></label>
+        <input type="number" id="c8_m" value="10" step="1" min="2" max="50">
+      </div>
+      <div class="input-group">
+        <label>Confidence Level <span>(Z)</span></label>
+        <select id="c8_z">
+          <option value="1.96" selected>95% (Z = 1.96)</option>
+          <option value="1.645">90% (Z = 1.645)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c8_nr" value="0.05" step="0.01" min="0" max="0.3">
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcClusterMean()" style="background:var(--red)">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c8_result">
+    <h4>Calculation Results — Cluster-Adjusted Mean</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c8_deff">—</div><div class="lbl">Design Effect</div></div>
+      <div class="result-stat"><div class="val" id="c8_base">—</div><div class="lbl">Base n (SRS)</div></div>
+      <div class="result-stat"><div class="val" id="c8_final">—</div><div class="lbl">Final n (cluster-adj + NR)</div></div>
+      <div class="result-stat"><div class="val" id="c8_clusters">—</div><div class="lbl">Clusters Needed</div></div>
+    </div>
+    <div class="result-breakdown" id="c8_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>Cluster Size × Precision Sensitivity (ρ=0.05, Z=95%, NR=5%)</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Final NR-adjusted total sample size and clusters needed at ±0.5 precision.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="c8_sensitivity"></table>
+  </div>
+
+  <hr class="section-rule">
+
+  <div class="references">
+    <h3>References — Numeric Outcome Approaches</h3>
+    <ol>
+      <li>Lwanga, S.K. & Lemeshow, S. (1991). <em>Sample Size Determination in Health Studies: A Practical Manual</em>. WHO. <a href="https://iris.who.int/items/9c2e5da4-3785-4fec-9dbc-841e4ae0d98c" target="_blank" style="color:var(--accent)">[WHO IRIS]</a> <a href="https://tbrieder.org/publications/books_english/lemeshow_samplesize.pdf" target="_blank" style="color:var(--accent)">[Full PDF]</a> — Definitive WHO reference for mean-based formulas (Approaches 6–8).</li>
+      <li>Fleiss, J.L., Levin, B., & Paik, M.C. (2003). <em>Statistical Methods for Rates and Proportions</em> (3rd ed.). Wiley. — Two-sample means formula derivation (Approach 7).</li>
+      <li>Sullivan, K.M. et al. (2009). OpenEpi: A Web-based Epidemiologic and Statistical Calculator. <em>Public Health Reports</em>, 124(3), 471–474. <a href="https://www.openepi.com/" target="_blank" style="color:var(--accent)">[OpenEpi.com]</a> — Online tool using same formulas.</li>
+      <li>WHO Multicentre Growth Reference Study Group. (2006). <em>WHO Child Growth Standards</em>. <a href="https://www.who.int/tools/child-growth-standards" target="_blank" style="color:var(--accent)">[WHO]</a> — Source of σ≈1.0 for WAZ in reference populations.</li>
+      <li>Cochran, W.G. (1977). <em>Sampling Techniques</em> (3rd ed.). Wiley. <a href="https://iris.who.int/items/9c2e5da4-3785-4fec-9dbc-841e4ae0d98c" target="_blank" style="color:var(--accent)">[WHO IRIS]</a> — Cluster sampling theory (Approach 8).</li>
+      <li>DHS Program. (2012). <em>DHS6 Sampling Manual</em>. <a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf" target="_blank" style="color:var(--accent)">[PDF]</a> — ρ values: 0.02–0.05 anthropometric; 0.04–0.07 binary.</li>
+    </ol>
+  </div>
+</section>
+
+
+<!-- APPROACH 9 — MULTI-ARM ALPHA ADJUSTMENT -->
+<section class="approaches-section" id="approach9" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Approach 09 — Multi-Arm Correction</div>
+  <h2>Multi-Arm Trial with Alpha Adjustment</h2>
+
+  <div class="approach-header" style="border-left-color:#6B21A8; background:#F5F0FF;">
+    <div class="use-case">USE WHEN → 3+ treatment arms compared to control · Multiple pairwise comparisons · Factorial designs · Dose-finding studies · Multi-site evaluations with site-level comparisons</div>
+    <h3>Sample size per arm with Bonferroni or Šidák correction for familywise Type I error control</h3>
+    <p>When an impact evaluation compares more than two groups (e.g. intervention A vs. control, intervention B vs. control, intervention A vs. B), each pairwise comparison inflates the probability of a false positive. If you conduct <em>k</em> comparisons at α=0.05 each, the familywise error rate rises to approximately 1–(1–α)<sup>k</sup>. For k=3 comparisons, this is 14.3% — nearly three times the intended 5%. Alpha adjustment corrects each individual test to maintain the overall familywise α at the desired level.</p>
+  </div>
+
+  <div class="formula-box">
+    <span class="comment">// BONFERRONI CORRECTION</span><br>
+    α_adj = α / k<br>
+    <span class="comment">// α = desired familywise error rate (e.g. 0.05)</span><br>
+    <span class="comment">// k = number of pairwise comparisons</span><br>
+    <span class="comment">// For 3 arms vs. control: k = 3 comparisons</span><br>
+    <span class="comment">// For 4 arms total (all pairwise): k = C(4,2) = 6</span><br>
+    <br>
+    <span class="comment">// ŠIDÁK CORRECTION (less conservative)</span><br>
+    α_adj = 1 – (1 – α)^(1/k)<br>
+    <span class="comment">// Exact correction; less conservative than Bonferroni</span><br>
+    <br>
+    <span class="comment">// SAMPLE SIZE PER ARM (proportion outcome)</span><br>
+    Z_adj = Z-score at α_adj/2 (two-sided)<br>
+    n_per_arm = DEFF × [Z_adj + Z_β]² × [P₁(1–P₁) + P₂(1–P₂)] / (P₁–P₂)²<br>
+    n_total = n_per_arm × (arms + 1)   <span class="comment">// +1 for shared control</span><br>
+    n_final = CEILING( n_total / (1 – NR), 1 )
+  </div>
+
+  <div class="alert">⚠ <strong>When to adjust:</strong> Alpha adjustment is required whenever you plan multiple <em>primary</em> comparisons from the same study. It is <em>not</em> required for (a) a single pre-specified primary comparison with secondary/exploratory analyses, (b) subgroup analyses declared as exploratory, or (c) a single comparison across multiple outcomes if a primary outcome is pre-specified.</div>
+
+  <div class="alert" style="background:#F5F0FF; border-color:#6B21A8; color:#3B0764; margin-top:8px;">
+    <strong>Choosing a correction:</strong> <strong>Bonferroni</strong> divides α equally among k comparisons — always valid but conservative. <strong>Šidák</strong> is slightly less conservative and exact for independent tests. <strong>Holm-Bonferroni</strong> (sequential) offers better power but applies at the analysis stage only. For sample size calculation, use Bonferroni (conservative) or Šidák (recommended).
+  </div>
+
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Number of Treatment Arms <span>(arms)</span></label>
+        <input type="number" id="c9_arms" value="3" step="1" min="2" max="10">
+        <div class="input-hint">Excluding the shared control arm.</div>
+      </div>
+      <div class="input-group">
+        <label>Comparison Structure</label>
+        <select id="c9_structure">
+          <option value="vs_control" selected>Each arm vs. control only</option>
+          <option value="all_pairwise">All pairwise comparisons</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Correction Method</label>
+        <select id="c9_method">
+          <option value="sidak" selected>Šidák (recommended)</option>
+          <option value="bonferroni">Bonferroni (conservative)</option>
+          <option value="none">None (uncorrected)</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Baseline Prevalence <span>(P₁)</span></label>
+        <input type="number" id="c9_p1" value="0.50" step="0.001" min="0.01" max="0.99">
+      </div>
+      <div class="input-group">
+        <label>Min. Detectable Difference <span>(MDD)</span></label>
+        <input type="number" id="c9_mdd" value="0.10" step="0.005" min="0.01" max="0.5">
+      </div>
+      <div class="input-group">
+        <label>Design Effect <span>(DEFF)</span></label>
+        <input type="number" id="c9_deff" value="1.0" step="0.01" min="1" max="5">
+      </div>
+    </div>
+  </div>
+  <div class="calc-grid">
+    <div>
+      <div class="input-group">
+        <label>Familywise α</label>
+        <select id="c9_alpha">
+          <option value="0.05" selected>0.05 (5%)</option>
+          <option value="0.10">0.10 (10%)</option>
+          <option value="0.01">0.01 (1%)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Statistical Power <span>(1–β)</span></label>
+        <select id="c9_zb">
+          <option value="0.842" selected>80% — Preferred</option>
+          <option value="1.036">85%</option>
+          <option value="1.282">90%</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <div class="input-group">
+        <label>Non-Response Rate <span>(NR)</span></label>
+        <input type="number" id="c9_nr" value="0.05" step="0.01" min="0" max="0.3">
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px; color:var(--mid); margin-bottom:12px; font-style:italic;">✎ The values above are defaults. Replace them with your study-specific parameters to get your own estimate.</p>
+  <button class="calc-btn" onclick="calcMultiArm()" style="background:#6B21A8">Calculate Sample Size</button>
+
+  <div class="result-panel" id="c9_result">
+    <h4>Calculation Results — Multi-Arm Alpha-Adjusted</h4>
+    <div class="result-grid">
+      <div class="result-stat"><div class="val" id="c9_k">—</div><div class="lbl">Comparisons (k)</div></div>
+      <div class="result-stat"><div class="val" id="c9_alpha_adj">—</div><div class="lbl">α per comparison</div></div>
+      <div class="result-stat"><div class="val" id="c9_z_adj">—</div><div class="lbl">Z (adjusted)</div></div>
+      <div class="result-stat"><div class="val" id="c9_narm">—</div><div class="lbl">n per Arm</div></div>
+      <div class="result-stat"><div class="val" id="c9_total">—</div><div class="lbl">Total n (all arms + control)</div></div>
+      <div class="result-stat"><div class="val" id="c9_final">—</div><div class="lbl">Final n (NR-adjusted)</div></div>
+    </div>
+    <div class="result-breakdown" id="c9_steps"></div>
+  </div>
+
+  <hr class="section-rule">
+  <h3>Impact of Alpha Adjustment: Uncorrected vs. Corrected</h3>
+  <p style="font-size:13px; margin-bottom:12px;">Total NR-adjusted sample size across arm counts. Shows the cost of ignoring alpha inflation. P₁=0.50, MDD=0.10, DEFF=1.0, 80% power, NR=5%.</p>
+  <div class="deff-table-wrap">
+    <table class="deff-table" id="c9_sensitivity"></table>
+  </div>
+
+  <hr class="section-rule">
+  <div class="references">
+    <h3>References — Multi-Arm Correction</h3>
+    <ol>
+      <li>Bonferroni, C.E. (1936). Teoria statistica delle classi e calcolo delle probabilità. <em>Pubblicazioni del R Istituto Superiore di Scienze Economiche e Commerciali di Firenze</em>, 8, 3–62.</li>
+      <li>Šidák, Z. (1967). Rectangular confidence regions for the means of multivariate normal distributions. <em>JASA</em>, 62(318), 626–633. <a href="https://www.jstor.org/stable/2283989" target="_blank" style="color:var(--accent)">[JSTOR]</a></li>
+      <li>Holm, S. (1979). A simple sequentially rejective multiple test procedure. <em>Scand J Statistics</em>, 6(2), 65–70. <a href="https://www.jstor.org/stable/4615733" target="_blank" style="color:var(--accent)">[JSTOR]</a></li>
+      <li>Parmar, M.K.B. et al. (2014). More multiarm randomised trials of superiority are needed. <em>The Lancet</em>, 384(9940), 283–284. <a href="https://doi.org/10.1016/S0140-6736(14)61122-3" target="_blank" style="color:var(--accent)">[DOI]</a></li>
+      <li>Freidlin, B. et al. (2008). Multi-arm clinical trials of new agents. <em>Clinical Cancer Research</em>, 14(14), 4368–4371. <a href="https://pubmed.ncbi.nlm.nih.gov/18628449/" target="_blank" style="color:var(--accent)">[PubMed]</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     COMMON MISTAKES
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="mistakes" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Methodological Rigour</div>
+  <h2>Common Mistakes in Sample Size Determination</h2>
+  <p>These errors recur in grant proposals, IRB submissions, and published studies. Each one undermines statistical validity and can invalidate findings at peer review.</p>
+
+  <div class="concept-grid" style="grid-template-columns: 1fr;">
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 1</div>
+      <div class="label">Using Cochran's formula for everything</div>
+      <p>The Cochran formula (Approach 1) assumes simple random sampling and a binary outcome. Applying it to a clustered design produces artificially narrow confidence intervals. Applying it to a continuous outcome (e.g. MUAC, hemoglobin) is a methodological error — use Approaches 6–8 instead. Applying it to a two-arm comparison without power analysis makes the study underpowered.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 2</div>
+      <div class="label">Ignoring the design effect in clustered sampling</div>
+      <p>If you select households via villages, schools, or enumeration areas, your effective sample size is smaller than the raw count. Ignoring DEFF means your confidence intervals are too narrow and your p-values are too small. This is the single most common statistical error in health surveys in low-resource settings.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 3</div>
+      <div class="label">Defaulting to P = 0.50 without justification</div>
+      <p>P = 0.50 maximises sample size and is conservative, but it is not always necessary or appropriate. If you have a prior estimate (from DHIS2, DHS, UBOS, or a pilot), use it. Cite the source. Reviewers flag "P = 0.50 for maximum sample" as lazy when prior data exists. The reduction can be 20–25% with full scientific justification.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 4</div>
+      <div class="label">Confusing margin of error with standard error</div>
+      <p>Margin of error (e) = Z × SE. Standard error (SE) = e / Z. At 95% CI: SE = e / 1.96. Approach 4 (Beneficiary) uses SE directly; Approaches 1–3 use e. Mixing them up inflates or deflates sample size by a factor of ~4. Always check which parameterization your formula expects.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 5</div>
+      <div class="label">Including power in a descriptive baseline</div>
+      <p>Statistical power (1−β) is only relevant for hypothesis-testing designs: RCTs, quasi-experiments, pre-post with comparator. A descriptive prevalence survey has no hypothesis to test and no effect to detect. Adding power to a baseline formula inflates sample size unnecessarily and signals methodological confusion to reviewers.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 6</div>
+      <div class="label">Omitting finite population correction for small populations</div>
+      <p>When sampling more than 5% of a known population (e.g. 200 out of 2,000 beneficiaries), the FPC reduces the required sample size. n<sub>adj</sub> = n × N / (n + N − 1). Omitting FPC means over-sampling and wasting resources. Conversely, not using it when n/N &gt; 5% produces overly conservative estimates.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 7</div>
+      <div class="label">Using an undocumented σ for continuous outcomes</div>
+      <p>For mean-based sample sizes (Approaches 6–8), σ is the most critical parameter. Reviewers will ask: "Where does your σ come from?" Acceptable sources: (1) a prior study in the same population, (2) a pilot survey (n ≥ 20), (3) the empirical rule σ ≈ Range/4, (4) published literature for a similar population. Guessing σ is unacceptable.</p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--red)">
+      <div class="symbol" style="color:var(--red); font-size:15px;">Mistake 8</div>
+      <div class="label">Not adjusting for multiple primary outcomes</div>
+      <p>If your study has multiple primary indicators, calculate sample size for each and use the largest. If you plan multiple hypothesis tests, consider Bonferroni or other multiplicity corrections — otherwise, Type I error accumulates. State your primary outcome clearly; secondary outcomes should not drive sample size.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     REPORTING CHECKLIST
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="checklist" style="border-top:1px solid var(--rule); padding-top:48px;">
+  <div class="section-label">Publication Standards</div>
+  <h2>Sample Size Reporting Checklist</h2>
+  <p>Every methods section should document how the sample size was determined. Use this checklist to ensure your report meets IRB, journal, and funder requirements. Based on CONSORT, STROBE, and WHO reporting guidelines.</p>
+
+  <div class="formula-box" style="line-height:2.2;">
+    <span class="comment">// ── MINIMUM REPORTING REQUIREMENTS ─────────────────────</span><br>
+    ☐ Study design type (cross-sectional, RCT, quasi-experimental, cohort)<br>
+    ☐ Primary outcome variable and whether it is binary or continuous<br>
+    ☐ Formula used, with full citation (Cochran, Fleiss, WHO, etc.)<br>
+    ☐ All parameter values used: P or σ, e or δ, Z, power (if applicable)<br>
+    ☐ Source of each parameter (cite DHS, DHIS2, pilot, published literature)<br>
+    ☐ Non-response rate assumption and justification<br>
+    <br>
+    <span class="comment">// ── IF CLUSTER SAMPLING ────────────────────────────────</span><br>
+    ☐ ICC (ρ) value and source<br>
+    ☐ Cluster size (m) and how it was determined<br>
+    ☐ Design effect (DEFF) calculation shown<br>
+    ☐ Number of clusters required<br>
+    ☐ Sampling frame description (national statistical body EAs (e.g. UBOS in Uganda, KNBS in Kenya), UNHCR blocks, school register)<br>
+    <br>
+    <span class="comment">// ── IF COMPARATIVE / IMPACT DESIGN ─────────────────────</span><br>
+    ☐ Statistical power level (80%, 85%, 90%) and justification<br>
+    ☐ Minimum detectable difference/effect (MDD or δ) and justification<br>
+    ☐ Allocation ratio (if unequal arms)<br>
+    ☐ Whether the test is one-sided or two-sided<br>
+    <br>
+    <span class="comment">// ── IF FINITE POPULATION ───────────────────────────────</span><br>
+    ☐ Population size (N) and source<br>
+    ☐ Whether FPC was applied and the adjusted sample size<br>
+    ☐ Sampling fraction (n/N) reported<br>
+    <br>
+    <span class="comment">// ── FINAL CHECKS ──────────────────────────────────────</span><br>
+    ☐ Final sample size clearly stated (total and per arm/stratum)<br>
+    ☐ Sensitivity analysis shown (at least one alternate scenario)<br>
+    ☐ Budget and feasibility constraints acknowledged<br>
+    ☐ Software or tool used for calculation identified
+  </div>
+
+  <div class="alert" style="margin-top:20px;">
+    ⚠ <strong>CONSORT (2010)</strong> requires RCTs to report: "How sample size was determined. When applicable, explanation of any interim analyses and stopping guidelines." <strong>STROBE (2007)</strong> requires observational studies to report: "Explain how the study size was arrived at." Both are indexed by major journals and IRBs globally.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     QUICK REFERENCE SUMMARY
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="summary" style="border-top:1px solid var(--rule); padding-top:48px; padding-bottom:48px;">
+  <div class="section-label">Quick Reference</div>
+  <h2>Approach Selection Summary</h2>
+  <div class="deff-table-wrap">
+    <table class="deff-table">
+      <tr>
+        <th style="text-align:left">Approach</th>
+        <th>Outcome Type</th>
+        <th>Design</th>
+        <th>Key Parameters</th>
+        <th>When to Use</th>
+      </tr>
+      <tr><td>1 · Cochran</td><td>Binary</td><td>SRS</td><td>P, e, Z</td><td>Simple prevalence, household register</td></tr>
+      <tr><td>2 · Cluster-Adjusted</td><td>Binary</td><td>Cluster</td><td>P, e, Z, ρ, m</td><td>Village/block-based enumeration</td></tr>
+      <tr><td>3 · Two-Arm Impact</td><td>Binary</td><td>RCT/QE</td><td>P<sub>1</sub>, MDD, DEFF, power</td><td>Treatment vs. control comparison</td></tr>
+      <tr><td>4 · Beneficiary</td><td>Binary</td><td>Stratified cluster</td><td>P, SE, DEFF, b, strata</td><td>Program beneficiaries by EA</td></tr>
+      <tr><td>5 · General Pop</td><td>Binary</td><td>Stratified cluster</td><td>P, SE, DEFF, b, strata</td><td>Population-level survey with known P</td></tr>
+      <tr><td>6 · One-Sample Mean</td><td>Continuous</td><td>SRS</td><td>σ, e, Z</td><td>Estimate a single population mean</td></tr>
+      <tr><td>7 · Two-Sample Means</td><td>Continuous</td><td>Two-arm</td><td>σ, δ, power, k</td><td>Compare means between groups</td></tr>
+      <tr><td>8 · Cluster Mean</td><td>Continuous</td><td>Cluster</td><td>σ, e, ρ, m</td><td>Cluster sampling, continuous outcome</td></tr>
+      <tr style="background:#F5F0FF"><td>9 · Multi-Arm</td><td>Binary</td><td>Multi-arm RCT</td><td>P, MDD, k, α_adj, power</td><td>3+ arms; Bonferroni/Šidák correction</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FURTHER READING & TOOLS
+══════════════════════════════════════════════════════════ -->
+<section class="approaches-section" id="resources" style="border-top:1px solid var(--rule); padding-top:48px; padding-bottom:48px;">
+  <div class="section-label">Resources</div>
+  <h2>Further Reading, Tools & Full References</h2>
+  <p>All formulas in this guide are derived from publicly accessible, peer-reviewed sources. Below are the primary references with direct links, grouped by topic, plus free tools for verification.</p>
+
+  <h3 style="margin-top:24px;">Core Textbooks & WHO Manuals</h3>
+  <div class="concept-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="concept-card">
+      <div class="symbol" style="font-size:14px;">Cochran (1977)</div>
+      <div class="label">Sampling Techniques, 3rd Edition</div>
+      <p>The foundational reference for Cochran’s formula, stratified sampling, and cluster sampling theory. Used in Approaches 1, 2, and 8.</p>
+      <p style="margin-top:6px;"><a href="https://iris.who.int/items/9c2e5da4-3785-4fec-9dbc-841e4ae0d98c" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">WHO IRIS Catalogue →</a></p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol" style="font-size:14px;">Lwanga & Lemeshow (1991)</div>
+      <div class="label">Sample Size Determination in Health Studies</div>
+      <p>WHO practical manual for sample size formulas in health research. Covers proportions, means, case-control, and cohort designs. Used in Approaches 6–8.</p>
+      <p style="margin-top:6px;"><a href="https://tbrieder.org/publications/books_english/lemeshow_samplesize.pdf" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">Full PDF (tbrieder.org) →</a></p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol" style="font-size:14px;">Fleiss, Levin & Paik (2003)</div>
+      <div class="label">Statistical Methods for Rates and Proportions</div>
+      <p>Derivation of two-sample comparison formulas for both proportions and means. Used in Approaches 3 and 7.</p>
+      <p style="margin-top:6px;"><a href="https://onlinelibrary.wiley.com/doi/book/10.1002/0471445428" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">Wiley Online Library →</a></p>
+    </div>
+    <div class="concept-card">
+      <div class="symbol" style="font-size:14px;">Donner & Klar (2000)</div>
+      <div class="label">Design and Analysis of Cluster Randomization Trials</div>
+      <p>Definitive text on ICC, DEFF, and the statistical theory of cluster-based designs. Underpins Approaches 2, 3, and 8.</p>
+      <p style="margin-top:6px;"><span style="color:var(--mid); font-family:var(--mono); font-size:11px;">Arnold Publishers, London. ISBN 0-340-69153-0</span></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">ICC & Design Effect Sources</h3>
+  <div class="concept-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="concept-card" style="border-top-color:var(--accent2)">
+      <div class="symbol" style="font-size:14px; color:var(--accent2)">DHS6 Sampling Manual</div>
+      <div class="label">ICF International (2012)</div>
+      <p>Source of ρ=0.04–0.07 for Uganda (48 UDHS surveys), DEFF=1.22 for immunization, and cluster sampling methodology for national health surveys.</p>
+      <p style="margin-top:6px;"><a href="https://dhsprogram.com/pubs/pdf/DHSM4/DHS6_Sampling_Manual_Sept2012_DHSM4.pdf" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">Download PDF (DHS Program) →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--accent2)">
+      <div class="symbol" style="font-size:14px; color:var(--accent2)">School-Based CRT ICCs</div>
+      <div class="label">J Clinical Epidemiology (2023)</div>
+      <p>Meta-analysis of 246 school-based cluster RCTs worldwide. Median school-level ICC = 0.031 (IQR 0.011–0.08). Classroom-level = 0.063 (IQR 0.024–0.10). Two-thirds of ICCs ≤ 0.05.</p>
+      <p style="margin-top:6px;"><a href="https://pubmed.ncbi.nlm.nih.gov/36997102/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">PubMed 36997102 →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--accent2)">
+      <div class="symbol" style="font-size:14px; color:var(--accent2)">Adolescent Health ICCs</div>
+      <div class="label">ESPAD / PMC (2018)</div>
+      <p>School-level ICCs for substance use (0.01–0.21) and psychosocial health (0.01–0.07) across 21 European countries. Higher for substance use than wellbeing outcomes.</p>
+      <p style="margin-top:6px;"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5757888/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">PMC5757888 →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--accent2)">
+      <div class="symbol" style="font-size:14px; color:var(--accent2)">Primary Care ICCs</div>
+      <div class="label">Ann Family Medicine / PMC (2006)</div>
+      <p>ICCs for patient behaviours (&lt;0.10), demographics (age ICC=0.151, race=0.265), and intent-to-change (≤0.007) across 61 practices and 5,042 patients.</p>
+      <p style="margin-top:6px;"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3354973/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">PMC3354973 →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--accent2)">
+      <div class="symbol" style="font-size:14px; color:var(--accent2)">Maternal / Perinatal ICCs</div>
+      <div class="label">EMIP Brazil / PMC (2014)</div>
+      <p>Median ICC=0.014 for descriptive variables, 0.041 for newborn outcomes, 0.102 for process variables. 78% of ICCs &lt; 0.10.</p>
+      <p style="margin-top:6px;"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4000432/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">PMC4000432 →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--accent2)">
+      <div class="symbol" style="font-size:14px; color:var(--accent2)">India NFHS ICCs</div>
+      <div class="label">PMC (2022)</div>
+      <p>ICC range 0.03–0.71 for socio-demographic variables across 4 NFHS rounds. Highest for religion and caste. Useful for social programme evaluations.</p>
+      <p style="margin-top:6px;"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9798159/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">PMC9798159 →</a></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Reporting Standards</h3>
+  <div class="concept-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="concept-card" style="border-top-color:var(--warn)">
+      <div class="symbol" style="font-size:14px; color:var(--warn)">CONSORT 2010</div>
+      <div class="label">Randomised Controlled Trials</div>
+      <p>International standard for reporting RCTs. Item 7a: “How sample size was determined.” Extension for cluster RCTs (2012) adds ICC, DEFF, and cluster-level requirements.</p>
+      <p style="margin-top:6px;"><a href="https://www.bmj.com/content/340/bmj.c332" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">BMJ: CONSORT 2010 →</a><br><a href="https://www.bmj.com/content/345/bmj.e5661" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">BMJ: Cluster Extension →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--warn)">
+      <div class="symbol" style="font-size:14px; color:var(--warn)">STROBE</div>
+      <div class="label">Observational Studies</div>
+      <p>Reporting guideline for cohort, case-control, and cross-sectional studies. Item 10: “Explain how the study size was arrived at.” Used by most public health journals.</p>
+      <p style="margin-top:6px;"><a href="https://www.strobe-statement.org/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">strobe-statement.org →</a></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Free Online Calculators for Verification</h3>
+  <div class="concept-grid" style="grid-template-columns:1fr 1fr 1fr;">
+    <div class="concept-card" style="border-top-color:var(--mid)">
+      <div class="symbol" style="font-size:14px; color:var(--mid)">OpenEpi</div>
+      <p style="font-size:12px;">Proportion and means formulas. Used by WHO and CDC. Matches Approaches 1, 3, 6, 7.</p>
+      <p style="margin-top:6px;"><a href="https://www.openepi.com/SampleSize/SSPropor.htm" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">openepi.com →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--mid)">
+      <div class="symbol" style="font-size:14px; color:var(--mid)">ENA for SMART</div>
+      <p style="font-size:12px;">WHO/UNICEF nutrition survey calculator. Cluster-adjusted for MUAC, WAZ, stunting. Matches Approaches 2, 8.</p>
+      <p style="margin-top:6px;"><a href="https://smartmethodology.org/" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">smartmethodology.org →</a></p>
+    </div>
+    <div class="concept-card" style="border-top-color:var(--mid)">
+      <div class="symbol" style="font-size:14px; color:var(--mid)">G*Power</div>
+      <p style="font-size:12px;">Free power analysis tool. Two-sample tests, ANOVA, regression. Matches Approaches 3, 7.</p>
+      <p style="margin-top:6px;"><a href="https://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower" target="_blank" style="color:var(--accent); font-family:var(--mono); font-size:11px;">G*Power (HHU) →</a></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+// ── UTILITIES ────────────────────────────────────────────────────────────────
+const ceil = Math.ceil;
+const round = (v, d=2) => Math.round(v * 10**d) / 10**d;
+
+function showResult(id) {
+  document.getElementById(id).classList.add('show');
+}
+
+// ── APPROACH 1: COCHRAN ──────────────────────────────────────────────────────
+function calcCochran() {
+  const P  = +document.getElementById('c1_p').value;
+  const e  = +document.getElementById('c1_e').value;
+  const Z  = +document.getElementById('c1_z').value;
+  const NR = +document.getElementById('c1_nr').value;
+  const N  = +document.getElementById('c1_N').value;
+
+  const raw   = (Z*Z * P * (1-P)) / (e*e);
+  let adj = raw;
+  let fpcNote = '';
+  if (N > 0 && raw/N > 0.05) {
+    adj = raw * N / (raw + N - 1);
+    const fpcVal = round(Math.sqrt((N - adj)/(N - 1)), 4);
+    fpcNote = `<br><span class="step">Step 1b — FPC:</span> n/N = ${round(raw/N*100,1)}% > 5% → n_adj = ${ceil(raw)} × ${N} / (${ceil(raw)} + ${N} − 1) = ${round(adj,2)} → ${ceil(adj)} (FPC factor ≈ ${fpcVal})`;
+  }
+  const final = ceil(adj / (1 - NR));
+  const half  = ceil(final / 2);
+
+  document.getElementById('c1_raw').textContent   = ceil(raw);
+  document.getElementById('c1_final').textContent = final;
+  document.getElementById('c1_half').textContent  = half;
+  document.getElementById('c1_steps').innerHTML   =
+    `<span class="step">Step 1 — Raw n:</span>  n = ${Z}² × ${P}(1–${P}) / ${e}² = ${Z*Z} × ${round(P*(1-P),4)} / ${round(e*e,4)} = ${round(raw,2)} → ${ceil(raw)}` + fpcNote + `<br>` +
+    `<span class="step">Step 2 — NR adj.:</span> ${ceil(adj)} / (1 – ${NR}) = ${round(ceil(adj)/(1-NR),2)} → ${final}<br>` +
+    `<span class="step">Step 3 — Per stratum:</span> ${final} / 2 = ${half} per group`;
+  showResult('c1_result');
+  buildCochranScenarios(P, Z, NR);
+}
+
+function buildCochranScenarios(P, Z, NR) {
+  const errors = [0.05, 0.06, 0.07, 0.075, 0.08, 0.10];
+  const preferred = 0.05;
+  const alternatives = [0.06, 0.07];
+  const wrap = document.getElementById('c1_scenarios');
+  wrap.innerHTML = '';
+  errors.forEach(e => {
+    const raw = (Z*Z*P*(1-P))/(e*e);
+    const fn  = ceil(raw/(1-NR));
+    const div = document.createElement('div');
+    div.className = 'scenario-card' + (e===preferred?' preferred':'');
+    div.innerHTML = `<div class="sc-n">${fn}</div><div class="sc-label">Final n · ±${(e*100).toFixed(1)}% margin</div><div class="sc-detail">Raw n: ${ceil(raw)} · Per stratum: ${ceil(fn/2)}${alternatives.includes(e)?' · Alternative':''}</div>`;
+    wrap.appendChild(div);
+  });
+}
+
+// ── APPROACH 2: CLUSTER ──────────────────────────────────────────────────────
+function calcCluster() {
+  const P   = +document.getElementById('c2_p').value;
+  const e   = +document.getElementById('c2_e').value;
+  const rho = +document.getElementById('c2_rho').value;
+  const m   = +document.getElementById('c2_m').value;
+  const Z   = +document.getElementById('c2_z').value;
+  const NR  = +document.getElementById('c2_nr').value;
+
+  const deff    = 1 + rho*(m-1);
+  const base_n  = (Z*Z*P*(1-P))/(e*e);
+  const adj_n   = base_n * deff;
+  const final   = ceil(adj_n / (1-NR));
+  const clusters= ceil(final / m);
+  const half    = ceil(final / 2);
+
+  document.getElementById('c2_deff').textContent    = round(deff,3);
+  document.getElementById('c2_raw').textContent     = ceil(adj_n);
+  document.getElementById('c2_final').textContent   = final;
+  document.getElementById('c2_clusters').textContent= clusters;
+  document.getElementById('c2_half').textContent    = half;
+  document.getElementById('c2_steps').innerHTML =
+    `<span class="step">DEFF:</span>  1 + ${rho}×(${m}–1) = 1 + ${round(rho*(m-1),4)} = ${round(deff,4)}<br>` +
+    `<span class="step">Base n:</span> ${Z}² × ${P}×${round(1-P,3)} / ${e}² = ${round(base_n,2)}<br>` +
+    `<span class="step">Cluster-adj n:</span> ${round(base_n,2)} × ${round(deff,4)} = ${round(adj_n,2)} → ${ceil(adj_n)}<br>` +
+    `<span class="step">NR-adjusted n:</span> ${ceil(adj_n)} / ${1-NR} = ${final}<br>` +
+    `<span class="step">Clusters:</span> ${final} / ${m} = ${clusters} clusters of ${m} households<br>` +
+    `<span class="step">Per stratum:</span> ${final} / 2 = ${half}`;
+  showResult('c2_result');
+  buildDEFFMatrix();
+  buildC2Sensitivity(P, Z, rho, NR);
+}
+
+function buildDEFFMatrix() {
+  const iccs    = [0.02,0.03,0.05,0.08,0.10,0.12,0.14,0.16,0.18];
+  const sizes   = [5,10,15,20,25,30,35];
+  const current_rho = +document.getElementById('c2_rho').value;
+  const current_m   = +document.getElementById('c2_m').value;
+  const tbl = document.getElementById('deff_matrix');
+  let html = '<tr><th>ICC (ρ)</th>';
+  sizes.forEach(s => html += `<th>m=${s}</th>`);
+  html += '</tr>';
+  iccs.forEach(rho => {
+    html += `<tr><td>ρ = ${rho}</td>`;
+    sizes.forEach(m => {
+      const deff = round(1+rho*(m-1), 2);
+      const hi   = (rho===current_rho && m===current_m) ? ' class="highlight"' : '';
+      html += `<td${hi}>${deff}</td>`;
+    });
+    html += '</tr>';
+  });
+  tbl.innerHTML = html;
+}
+
+function buildC2Sensitivity(P, Z, rho, NR) {
+  const cluster_sizes = [5,10,15,20];
+  const margins = [0.04,0.05,0.06,0.065,0.07,0.075,0.08,0.10];
+  const tbl = document.getElementById('c2_sensitivity');
+  let html = '<tr><th>Cluster (m)</th>';
+  margins.forEach(e => html += `<th>±${(e*100).toFixed(1)}%</th>`);
+  html += '<th style="border-left:2px solid #fff">Clusters at ±5%</th></tr>';
+  cluster_sizes.forEach(m => {
+    html += `<tr><td>m = ${m}</td>`;
+    margins.forEach(e => {
+      const deff = 1+rho*(m-1);
+      const n    = ceil(ceil((Z*Z*P*(1-P)/(e*e))*deff)/(1-NR));
+      const hi   = (e===0.05) ? ' class="highlight"' : '';
+      html += `<td${hi}>${n}</td>`;
+    });
+    const n7 = ceil(ceil((Z*Z*P*(1-P)/(0.05*0.05))*(1+rho*(m-1)))/(1-NR));
+    html += `<td style="border-left:2px solid var(--rule); font-weight:600">${ceil(n7/m)}</td></tr>`;
+  });
+  tbl.innerHTML = html;
+}
+
+// ── APPROACH 3: TWO-ARM ──────────────────────────────────────────────────────
+function calcTwoArm() {
+  const P1   = +document.getElementById('c3_p1').value;
+  const mdd  = +document.getElementById('c3_mdd').value;
+  const deff = +document.getElementById('c3_deff').value;
+  const Za   = +document.getElementById('c3_za').value;
+  const Zb   = +document.getElementById('c3_zb').value;
+  const NR   = +document.getElementById('c3_nr').value;
+  const P2   = Math.min(P1 + mdd, 0.999);
+
+  const num   = (Za+Zb)*(Za+Zb) * (P1*(1-P1) + P2*(1-P2));
+  const den   = (P1-P2)*(P1-P2);
+  const n_arm = ceil(deff * num / den);
+  const n_tot = n_arm * 2;
+  const final = ceil(n_tot / (1-NR));
+
+  document.getElementById('c3_narm').textContent  = n_arm;
+  document.getElementById('c3_ntotal').textContent= n_tot;
+  document.getElementById('c3_final').textContent = final;
+  document.getElementById('c3_steps').innerHTML =
+    `<span class="step">P₂:</span> ${P1} + ${mdd} = ${round(P2,3)}<br>` +
+    `<span class="step">Numerator:</span> (${Za}+${Zb})² × [${P1}×${round(1-P1,3)} + ${round(P2,3)}×${round(1-P2,3)}] = ${round((Za+Zb)**2,3)} × ${round(P1*(1-P1)+P2*(1-P2),4)} = ${round(num,3)}<br>` +
+    `<span class="step">Denominator:</span> (${P1}–${round(P2,3)})² = ${round(den,5)}<br>` +
+    `<span class="step">n per arm:</span> ${deff} × ${round(num/den,2)} = ${round(deff*num/den,2)} → ${n_arm}<br>` +
+    `<span class="step">Total (2 arms):</span> ${n_arm} × 2 = ${n_tot}<br>` +
+    `<span class="step">NR-adjusted:</span> ${n_tot} / ${1-NR} = ${final}`;
+  showResult('c3_result');
+  buildTwoArmSensitivity(P1, deff, Za, NR);
+}
+
+function buildTwoArmSensitivity(P1, deff, Za, NR) {
+  const powers = [{z:0.842,lbl:'80%'},{z:1.036,lbl:'85%'},{z:1.282,lbl:'90%'}];
+  const mdds   = [0.05,0.075,0.10,0.125,0.15,0.175,0.20];
+  const tbl    = document.getElementById('c3_sensitivity');
+  let html = '<tr><th>Power</th>';
+  mdds.forEach(m => html += `<th>MDD ${(m*100)}%</th>`);
+  html += '</tr>';
+  powers.forEach(pw => {
+    html += `<tr><td>${pw.lbl}</td>`;
+    mdds.forEach(mdd => {
+      const P2  = Math.min(P1+mdd, 0.999);
+      const num = (Za+pw.z)**2 * (P1*(1-P1)+P2*(1-P2));
+      const den = (P1-P2)**2;
+      const n   = ceil(ceil(deff*num/den)*2/(1-NR));
+      html += `<td>${n}</td>`;
+    });
+    html += '</tr>';
+  });
+  tbl.innerHTML = html;
+}
+
+// ── APPROACH 4: BENEFICIARY ──────────────────────────────────────────────────
+function calcBeneficiary() {
+  const P      = +document.getElementById('c4_p').value;
+  const SE     = +document.getElementById('c4_se').value;
+  const b      = +document.getElementById('c4_b').value;
+  const DEFF   = +document.getElementById('c4_deff').value;
+  const strata = +document.getElementById('c4_strata').value;
+
+  const C_raw    = (P*(1-P)*DEFF) / (SE*SE*b);
+  const C        = ceil(C_raw);
+  const n_strat  = C * b;
+  const n_total  = n_strat * strata;
+  const C_total  = C * strata;
+
+  document.getElementById('c4_clusters').textContent    = C;
+  document.getElementById('c4_n_stratum').textContent   = n_strat;
+  document.getElementById('c4_total').textContent       = n_total;
+  document.getElementById('c4_total_clusters').textContent = C_total;
+  document.getElementById('c4_steps').innerHTML =
+    `<span class="step">C (clusters per stratum):</span> ${P}×${round(1-P,3)}×${DEFF} / (${SE}²×${b}) = ${round(P*(1-P)*DEFF,4)} / ${round(SE*SE*b,6)} = ${round(C_raw,2)} → ${C}<br>` +
+    `<span class="step">n per stratum:</span> ${C} × ${b} = ${n_strat}<br>` +
+    `<span class="step">Total n (${strata} strata):</span> ${n_strat} × ${strata} = ${n_total}<br>` +
+    `<span class="step">Total clusters:</span> ${C} × ${strata} = ${C_total}`;
+  showResult('c4_result');
+}
+
+// ── APPROACH 5: GENERAL POP ──────────────────────────────────────────────────
+function calcGenPop() {
+  const P      = +document.getElementById('c5_p').value;
+  const SE     = +document.getElementById('c5_se').value;
+  const b      = +document.getElementById('c5_b').value;
+  const DEFF   = +document.getElementById('c5_deff').value;
+  const strata = +document.getElementById('c5_strata').value;
+
+  const C_raw   = (P*(1-P)*DEFF) / (SE*SE*b);
+  const C       = ceil(C_raw);
+  const n_strat = C * b;
+  const n_total = n_strat * strata;
+  const C_total = C * strata;
+
+  document.getElementById('c5_clusters').textContent    = C;
+  document.getElementById('c5_n_stratum').textContent   = n_strat;
+  document.getElementById('c5_total').textContent       = n_total;
+  document.getElementById('c5_total_clusters').textContent = C_total;
+  document.getElementById('c5_steps').innerHTML =
+    `<span class="step">P(1–P):</span> ${P} × ${round(1-P,3)} = ${round(P*(1-P),4)} (lower than 0.25 at P=0.5 — smaller sample justified)<br>` +
+    `<span class="step">C (clusters per stratum):</span> ${round(P*(1-P),4)}×${DEFF} / (${SE}²×${b}) = ${round(C_raw,2)} → ${C}<br>` +
+    `<span class="step">n per stratum:</span> ${C} × ${b} = ${n_strat}<br>` +
+    `<span class="step">Total n (${strata} strata):</span> ${n_strat} × ${strata} = ${n_total}<br>` +
+    `<span class="step">Total clusters:</span> ${C} × ${strata} = ${C_total}`;
+  showResult('c5_result');
+}
+
+// ── NAV HIGHLIGHT ────────────────────────────────────────────────────────────
+const sections = ['context','approach1','approach2','approach3','approach4','approach5','approach6','approach7','approach8','approach9','mistakes','checklist','summary','resources'];
+const navLinks  = document.querySelectorAll('.nav-inner a');
+window.addEventListener('scroll', () => {
+  let current = 'context';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 80) current = id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+current);
+  });
+});
+
+// ── APPROACH 6: ONE-SAMPLE MEAN ──────────────────────────────────────────────
+function calcOneMean() {
+  const sigma = +document.getElementById('c6_sigma').value;
+  const e     = +document.getElementById('c6_e').value;
+  const Z     = +document.getElementById('c6_z').value;
+  const NR    = +document.getElementById('c6_nr').value;
+  const N     = +document.getElementById('c6_N').value;
+
+  const raw   = Math.pow(Z * sigma / e, 2);
+  let adj = raw;
+  let fpcNote = '';
+  if (N > 0 && raw/N > 0.05) {
+    adj = raw * N / (raw + N - 1);
+    fpcNote = `<br><span class="step">FPC applied:</span> n/N = ${round(raw/N*100,1)}% > 5% → n_adj = ${round(adj,2)} → ${ceil(adj)}`;
+  }
+  const final = ceil(adj / (1 - NR));
+
+  document.getElementById('c6_raw').textContent   = ceil(raw);
+  document.getElementById('c6_final').textContent = final;
+  document.getElementById('c6_half').textContent  = ceil(final/2);
+  document.getElementById('c6_steps').innerHTML =
+    `<span class="step">Formula:</span> n = (Z × σ / e)² = (${Z} × ${sigma} / ${e})² = (${round(Z*sigma/e,3)})² = ${round(raw,2)} → ${ceil(raw)}` + fpcNote + `<br>` +
+    `<span class="step">NR-adjusted:</span> ${ceil(adj)} / ${1-NR} = ${final}<br>` +
+    `<span class="step">Per stratum (÷2):</span> ${ceil(final/2)}`;
+  showResult('c6_result');
+  buildOneMeanSensitivity(sigma, Z, NR);
+}
+
+function buildOneMeanSensitivity(sigma, Z, NR) {
+  const precisions = [0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0];
+  const sigmas     = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
+  const tbl = document.getElementById('c6_sensitivity');
+  let html = `<tr><th>σ \\ Precision (e)</th>`;
+  precisions.forEach(e => html += `<th>±${e}</th>`);
+  html += '</tr>';
+  sigmas.forEach(s => {
+    html += `<tr><td>σ = ${s}</td>`;
+    precisions.forEach(e => {
+      const n = ceil(ceil(Math.pow(Z*s/e,2))/(1-NR));
+      const hi = (s===sigma) ? ' class="highlight"' : '';
+      html += `<td${hi}>${n}</td>`;
+    });
+    html += '</tr>';
+  });
+  tbl.innerHTML = html;
+}
+
+// ── APPROACH 7: TWO-SAMPLE MEANS ─────────────────────────────────────────────
+function calcTwoMeans() {
+  const sigma = +document.getElementById('c7_sigma').value;
+  const delta = +document.getElementById('c7_delta').value;
+  const Za    = +document.getElementById('c7_za').value;
+  const Zb    = +document.getElementById('c7_zb').value;
+  const NR    = +document.getElementById('c7_nr').value;
+  const ratio = +document.getElementById('c7_ratio').value;
+
+  // n1 = (Za+Zb)² × σ² × (1 + 1/ratio) / δ²
+  const n1_raw  = Math.pow(Za+Zb,2) * sigma*sigma * (1 + 1/ratio) / (delta*delta);
+  const n1      = ceil(n1_raw);
+  const n2      = ceil(n1 / ratio);
+  const n_total = ceil((n1 + n2) / (1-NR));
+
+  document.getElementById('c7_n1').textContent    = n1;
+  document.getElementById('c7_n2').textContent    = n2;
+  document.getElementById('c7_total').textContent = n_total;
+  document.getElementById('c7_steps').innerHTML =
+    `<span class="step">Formula:</span> n₁ = (Z_α+Z_β)² × σ² × (1+1/k) / δ²<br>` +
+    `       = (${Za}+${Zb})² × ${sigma}² × (1+1/${ratio}) / ${delta}²<br>` +
+    `       = ${round((Za+Zb)**2,3)} × ${sigma*sigma} × ${round(1+1/ratio,3)} / ${delta*delta} = ${round(n1_raw,2)} → ${n1}<br>` +
+    `<span class="step">n₂ (control):</span> ${n1} / ${ratio} = ${n2}<br>` +
+    `<span class="step">Total (NR-adj):</span> (${n1}+${n2}) / ${1-NR} = ${n_total}`;
+  showResult('c7_result');
+  buildTwoMeansSensitivity(sigma, Za, Zb, NR);
+}
+
+function buildTwoMeansSensitivity(sigma, Za, Zb, NR) {
+  const deltas = [0.1,0.2,0.3,0.5,0.75,1.0,1.5,2.0];
+  const sigmas = [0.5,1.0,1.5,2.0,2.5,3.0];
+  const tbl = document.getElementById('c7_sensitivity');
+  let html = `<tr><th>σ \\ δ (difference)</th>`;
+  deltas.forEach(d => html += `<th>δ=${d}</th>`);
+  html += '</tr>';
+  sigmas.forEach(s => {
+    html += `<tr><td>σ = ${s}</td>`;
+    deltas.forEach(d => {
+      const n1 = ceil((Za+Zb)**2 * s*s * 2 / (d*d));
+      const n  = ceil(n1*2/(1-NR));
+      const hi = (s===sigma) ? ' class="highlight"' : '';
+      html += `<td${hi}>${n}</td>`;
+    });
+    html += '</tr>';
+  });
+  tbl.innerHTML = html;
+}
+
+// ── APPROACH 8: CLUSTER MEAN ──────────────────────────────────────────────────
+function calcClusterMean() {
+  const sigma  = +document.getElementById('c8_sigma').value;
+  const e      = +document.getElementById('c8_e').value;
+  const rho    = +document.getElementById('c8_rho').value;
+  const m      = +document.getElementById('c8_m').value;
+  const Z      = +document.getElementById('c8_z').value;
+  const NR     = +document.getElementById('c8_nr').value;
+
+  const deff    = 1 + rho*(m-1);
+  const base_n  = Math.pow(Z*sigma/e, 2);
+  const adj_n   = base_n * deff;
+  const final   = ceil(adj_n / (1-NR));
+  const clusters= ceil(final / m);
+
+  document.getElementById('c8_deff').textContent    = round(deff,3);
+  document.getElementById('c8_base').textContent    = ceil(base_n);
+  document.getElementById('c8_final').textContent   = final;
+  document.getElementById('c8_clusters').textContent= clusters;
+  document.getElementById('c8_steps').innerHTML =
+    `<span class="step">Base n (SRS):</span> (${Z}×${sigma}/${e})² = ${round(base_n,2)} → ${ceil(base_n)}<br>` +
+    `<span class="step">DEFF:</span> 1 + ${rho}×(${m}–1) = ${round(deff,4)}<br>` +
+    `<span class="step">Cluster-adj n:</span> ${ceil(base_n)} × ${round(deff,4)} = ${round(adj_n,2)} → ${ceil(adj_n)}<br>` +
+    `<span class="step">NR-adjusted:</span> ${ceil(adj_n)} / ${1-NR} = ${final}<br>` +
+    `<span class="step">Clusters needed:</span> ${final} / ${m} = ${clusters} clusters of ${m} units`;
+  showResult('c8_result');
+  buildC8Sensitivity(sigma, Z, rho, NR);
+}
+
+function buildC8Sensitivity(sigma, Z, rho, NR) {
+  const precisions = [0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0];
+  const sizes      = [5, 10, 15, 20, 25];
+  const tbl = document.getElementById('c8_sensitivity');
+  let html = `<tr><th>Cluster (m)</th>`;
+  precisions.forEach(e => html += `<th>±${e}</th>`);
+  html += '<th>Clusters at ±0.5</th></tr>';
+  sizes.forEach(ms => {
+    html += `<tr><td>m = ${ms}</td>`;
+    precisions.forEach(e => {
+      const deff = 1+rho*(ms-1);
+      const n = ceil(ceil(Math.pow(Z*sigma/e,2)*deff)/(1-NR));
+      html += `<td>${n}</td>`;
+    });
+    const n05 = ceil(ceil(Math.pow(Z*sigma/0.5,2)*(1+rho*(ms-1)))/(1-NR));
+    html += `<td style="border-left:2px solid var(--rule); font-weight:600">${ceil(n05/ms)}</td></tr>`;
+  });
+  tbl.innerHTML = html;
+}
+
+// ── INIT: pre-build on load ───────────────────────────────────────────────────
+// ── AUTO-CALCULATE ON LOAD ──────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  buildCochranScenarios(0.742, 1.96, 0.05);
+  buildDEFFMatrix();
+  // Auto-run all calculators with defaults
+  try { calcCochran(); } catch(e) {}
+  try { calcCluster(); } catch(e) {}
+  try { calcTwoArm(); } catch(e) {}
+  try { calcBeneficiary(); } catch(e) {}
+  try { calcGenPop(); } catch(e) {}
+  try { calcOneMean(); } catch(e) {}
+  try { calcTwoMeans(); } catch(e) {}
+  try { calcClusterMean(); } catch(e) {}
+  try { calcMultiArm(); } catch(e) {}
+});
+
+// ── APPROACH 9: MULTI-ARM ALPHA ADJUSTMENT ──────────────────────────────────
+function jnorm(p) {
+  // Rational approximation for inverse normal (Abramowitz & Stegun 26.2.23)
+  if (p <= 0) return -Infinity;
+  if (p >= 1) return Infinity;
+  if (p > 0.5) return -jnorm(1 - p);
+  const t = Math.sqrt(-2 * Math.log(p));
+  const c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
+  const d1 = 1.432788, d2 = 0.189269, d3 = 0.001308;
+  return -(t - (c0 + c1*t + c2*t*t) / (1 + d1*t + d2*t*t + d3*t*t*t));
+}
+
+function calcMultiArm() {
+  const arms = +document.getElementById('c9_arms').value;
+  const structure = document.getElementById('c9_structure').value;
+  const method = document.getElementById('c9_method').value;
+  const P1 = +document.getElementById('c9_p1').value;
+  const mdd = +document.getElementById('c9_mdd').value;
+  const deff = +document.getElementById('c9_deff').value;
+  const alpha = +document.getElementById('c9_alpha').value;
+  const Zb = +document.getElementById('c9_zb').value;
+  const NR = +document.getElementById('c9_nr').value;
+
+  // Number of comparisons
+  const totalArms = arms + 1; // including control
+  const k = (structure === 'vs_control') ? arms : (totalArms * (totalArms - 1)) / 2;
+
+  // Adjusted alpha
+  let alpha_adj;
+  if (method === 'bonferroni') {
+    alpha_adj = alpha / k;
+  } else if (method === 'sidak') {
+    alpha_adj = 1 - Math.pow(1 - alpha, 1 / k);
+  } else {
+    alpha_adj = alpha; // no correction
+  }
+
+  // Z for adjusted alpha (two-sided)
+  const Za_adj = -jnorm(alpha_adj / 2);
+  // Also compute uncorrected Z for comparison
+  const Za_uncorr = -jnorm(alpha / 2);
+
+  const P2 = Math.min(P1 + mdd, 0.999);
+  const num = (Za_adj + Zb) * (Za_adj + Zb) * (P1*(1-P1) + P2*(1-P2));
+  const den = (P1 - P2) * (P1 - P2);
+  const n_arm = ceil(deff * num / den);
+  const n_total = n_arm * totalArms;
+  const n_final = ceil(n_total / (1 - NR));
+
+  // Uncorrected for comparison
+  const num_unc = (Za_uncorr + Zb) * (Za_uncorr + Zb) * (P1*(1-P1) + P2*(1-P2));
+  const n_arm_unc = ceil(deff * num_unc / den);
+  const n_final_unc = ceil(n_arm_unc * totalArms / (1 - NR));
+
+  document.getElementById('c9_k').textContent = k;
+  document.getElementById('c9_alpha_adj').textContent = round(alpha_adj, 5);
+  document.getElementById('c9_z_adj').textContent = round(Za_adj, 4);
+  document.getElementById('c9_narm').textContent = n_arm;
+  document.getElementById('c9_total').textContent = n_total;
+  document.getElementById('c9_final').textContent = n_final;
+
+  const methodLabel = method === 'bonferroni' ? 'Bonferroni' : method === 'sidak' ? '\u0160id\u00e1k' : 'None';
+  const structLabel = structure === 'vs_control' ? `${arms} arms vs. control` : `all pairwise (${totalArms} groups)`;
+
+  document.getElementById('c9_steps').innerHTML =
+    `<span class="step">Comparisons:</span> ${structLabel} \u2192 k = ${k}<br>` +
+    `<span class="step">\u03b1 adjustment (${methodLabel}):</span> ` +
+    (method === 'bonferroni' ? `${alpha} / ${k} = ${round(alpha_adj, 5)}` :
+     method === 'sidak' ? `1 \u2013 (1\u2013${alpha})^(1/${k}) = ${round(alpha_adj, 5)}` :
+     `No correction: ${alpha}`) + `<br>` +
+    `<span class="step">Z (adjusted):</span> Z at \u03b1_adj/2 = ${round(alpha_adj/2, 5)} \u2192 Z = ${round(Za_adj, 4)}<br>` +
+    `<span class="step">P\u2082:</span> ${P1} + ${mdd} = ${round(P2, 3)}<br>` +
+    `<span class="step">n per arm:</span> ${deff} \u00d7 (${round(Za_adj,3)}+${Zb})\u00b2 \u00d7 [${P1}(1\u2013${P1}) + ${round(P2,3)}(1\u2013${round(P2,3)})] / (${P1}\u2013${round(P2,3)})\u00b2 = ${n_arm}<br>` +
+    `<span class="step">Total (${totalArms} groups):</span> ${n_arm} \u00d7 ${totalArms} = ${n_total}<br>` +
+    `<span class="step">NR-adjusted:</span> ${n_total} / ${1-NR} = ${n_final}<br>` +
+    `<span class="step" style="color:var(--warn);">Without correction:</span> n/arm = ${n_arm_unc}, total NR-adj = ${n_final_unc} (${round((n_final - n_final_unc)/n_final_unc*100, 1)}% increase with correction)`;
+
+  showResult('c9_result');
+  buildMultiArmSensitivity(P1, mdd, deff, alpha, Zb, NR);
+}
+
+function buildMultiArmSensitivity(P1, mdd, deff, alpha, Zb, NR) {
+  const armCounts = [2, 3, 4, 5, 6];
+  const tbl = document.getElementById('c9_sensitivity');
+  let html = '<tr><th>Treatment Arms</th><th>k (vs. control)</th><th>\u03b1_adj (\u0160id\u00e1k)</th><th>Z (adjusted)</th><th>n/arm</th><th>Total (NR-adj)</th><th>n/arm (uncorrected)</th><th>Total (uncorrected)</th><th>Inflation %</th></tr>';
+  const P2 = Math.min(P1 + mdd, 0.999);
+  const Za_unc = -jnorm(alpha / 2);
+  const num_unc = (Za_unc + Zb)**2 * (P1*(1-P1) + P2*(1-P2));
+  const den = (P1 - P2)**2;
+
+  armCounts.forEach(arms => {
+    const k = arms;
+    const a_adj = 1 - Math.pow(1 - alpha, 1/k);
+    const Za_adj = -jnorm(a_adj / 2);
+    const num_adj = (Za_adj + Zb)**2 * (P1*(1-P1) + P2*(1-P2));
+    const n_adj = ceil(deff * num_adj / den);
+    const n_unc = ceil(deff * num_unc / den);
+    const total_adj = ceil(n_adj * (arms+1) / (1-NR));
+    const total_unc = ceil(n_unc * (arms+1) / (1-NR));
+    const inflation = round((total_adj - total_unc) / total_unc * 100, 1);
+    const hi = (arms === +document.getElementById('c9_arms').value) ? ' class="highlight"' : '';
+    html += `<tr><td>${arms}</td><td${hi}>${k}</td><td${hi}>${round(a_adj, 4)}</td><td${hi}>${round(Za_adj, 3)}</td><td${hi}>${n_adj}</td><td${hi}>${total_adj}</td><td>${n_unc}</td><td>${total_unc}</td><td style="font-weight:700; color:var(--red)">+${inflation}%</td></tr>`;
+  });
+  tbl.innerHTML = html;
+}
+
+</script>
+
+<!-- ══════════════════════════════════════════════════════════
+     AUTHOR
+══════════════════════════════════════════════════════════ -->
+<footer style="background:#F7F9FA; color:var(--ink); padding:48px 0 40px; margin-top:0; border-top:4px solid var(--accent);">
+  <div style="max-width:900px; margin:0 auto; padding:0 32px;">
+    <div style="font-family:var(--mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:14px;">About the Author</div>
+    <div style="display:grid; grid-template-columns:1fr 2fr; gap:32px; align-items:start;">
+      <div>
+        <h3 style="color:var(--ink); font-size:20px; margin-bottom:4px;">Afra Nuwasiima</h3>
+        <p style="font-size:13px; color:var(--accent); margin-bottom:12px; font-family:var(--mono);">MSc. Biometry &amp; Biostatistics</p>
+        <p style="font-size:12px; line-height:1.7; margin-bottom:12px; color:#2A3D47;">Data Analytics, Monitoring &amp; Evaluation Manager at <strong>Educate!</strong>, leading performance analytics across programme streams in Uganda. Statistician and MEL professional with 11+ years of experience across Uganda, Kenya, South Sudan, and Sierra Leone.</p>
+        <p style="font-size:12px; line-height:1.7; color:#2A3D47;">19 peer-reviewed publications · 200+ citations · Research in health services, family planning, SRH, community health systems, and education programme evaluation.</p>
+      </div>
+      <div>
+        <p style="font-size:12px; line-height:1.8; margin-bottom:14px; color:#2A3D47;"><strong style="color:var(--accent);">Degrees</strong><br>
+        <strong>MSc. Biometry / Biostatistics, Grade A</strong> — University of Nairobi, Kenya (2016–2018)<br>
+        <span style="font-size:11px; color:var(--mid);">   DELTAS SSACAB Full Scholarship Award</span><br>
+        <strong>Postgraduate Diploma in Monitoring &amp; Evaluation</strong> — Uganda Management Institute (2022–2023)<br>
+        <span style="font-size:11px; color:var(--mid);">   CGPA: 5.0/5.0 · Best Postgraduate M&amp;E Student Award 2022/2023</span><br>
+        <strong>Bachelor of Statistics, First Class</strong> — Makerere University, Kampala (2010–2013)</p>
+
+        <p style="font-size:12px; line-height:1.8; margin-bottom:14px; color:#2A3D47;"><strong style="color:var(--accent);">Professional certificates</strong><br>
+        Certificate in Statistics in Medicine — Stanford University School of Medicine (2014, <em>Distinction</em>)<br>
+        Certificate in Economic Evaluation in Global Health — University of Washington (2015)<br>
+        Certificate in Data Analysis for Life Sciences: Statistics and R — Harvard T.H. Chan School of Public Health (2016)<br>
+        Certificate, Thinking Critically: Interpreting Randomized Clinical Trials — Stanford University School of Medicine (2016)<br>
+        </p>
+
+        <p style="font-size:12px; line-height:1.8; margin-bottom:14px; color:#2A3D47;"><strong style="color:var(--accent);">Selected experience</strong><br>
+        Educate! Uganda — Data Analytics, M&amp;E Manager (current)<br>
+        Living Goods — Manager, Monitoring, Evaluation &amp; Learning<br>
+        Montrose International — Statistical Expert-Associate<br>
+        Global Health Economics (GHE) Uganda — Statistical Analyst</p>
+
+        <p style="font-size:12px; line-height:1.8; margin-bottom:16px; color:#2A3D47;"><strong style="color:var(--accent);">Research areas</strong><br>
+        Survey design &amp; sampling methodology · Predictive analytics · Epidemiology · Survival analysis · Clinical trial design · Programme impact evaluation · Spatial analytics</p>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="https://scholar.google.com/citations?user=nXN6ZAYAAAAJ" target="_blank" style="font-family:var(--mono); font-size:11px; color:var(--accent); text-decoration:none; padding:5px 14px; border:1px solid var(--rule); border-radius:3px; background:#fff;">Google Scholar →</a>
+          <a href="https://www.researchgate.net/profile/Afra-Nuwasiima" target="_blank" style="font-family:var(--mono); font-size:11px; color:var(--accent); text-decoration:none; padding:5px 14px; border:1px solid var(--rule); border-radius:3px; background:#fff;">ResearchGate →</a>
+          <a href="https://www.linkedin.com/in/afra-nuwasiima-00967664/" target="_blank" style="font-family:var(--mono); font-size:11px; color:var(--accent); text-decoration:none; padding:5px 14px; border:1px solid var(--rule); border-radius:3px; background:#fff;">LinkedIn →</a>
+        </div>
+      </div>
+    </div>
+    <hr style="border:none; border-top:1px solid var(--rule); margin:28px 0 16px;">
+    <p style="font-size:11px; color:var(--mid); text-align:center;">© 2026 Afra Nuwasiima. This guide is open-access for research and educational use. Cite as: Nuwasiima, A. (2026). <em>Sample Size Determination for Impact Surveys: A Scientific Guide.</em></p>
+  </div>
+</footer>
+</body>
+</html>
